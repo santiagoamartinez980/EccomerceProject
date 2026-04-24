@@ -2,7 +2,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { AppSettings } from '../settings/appsettings';
+import { environment } from '../../environments/environment';
 import { Producto } from '../interfaces/Producto';
 import { responseProducto, ResponseProductoSingle } from '../interfaces/ResponseProducto';
 
@@ -11,7 +11,7 @@ import { responseProducto, ResponseProductoSingle } from '../interfaces/Response
 })
 export class Catalogo {
   private http = inject(HttpClient);
-  private apiUrl = AppSettings.apiUrl;
+  private apiUrl = environment.apiUrl;
 
 
   lista(): Observable<Producto[]> {

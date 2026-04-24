@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { AppSettings } from '../settings/appsettings';
 import { HttpClient } from '@angular/common/http';
 import { usuario } from '../interfaces/Usuario';
 import { Observable } from 'rxjs';
 import { responseAcceso } from '../interfaces/ResponseAcceso';
 import { Login } from '../interfaces/Login';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Acceso {
   private http=inject(HttpClient);
-  private apiUrl=AppSettings.apiUrl;
+  private apiUrl=environment.apiUrl;
 
   constructor() {}
 

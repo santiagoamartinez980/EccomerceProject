@@ -36,7 +36,11 @@ dist/
 .env.*
 
 # ========================
+<<<<<<< HEAD
 # OS files
+=======
+# OS
+>>>>>>> 54dcb5b (Se añadieron los devidos dockerfile en el fronted y backend, configuracion para la automatizacion de funcionamiento tanto en local como en docker, actualizacion para el debido funcionamiento de los tokens)
 # ========================
 .DS_Store
 Thumbs.db

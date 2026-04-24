@@ -1,0 +1,38 @@
+# 20-04-2026 Docker Compose para la aplicación de comercio electrónico con SQL Server, backend en .NET y frontend en Angular`
+ version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server
+    environment:
+      SA_PASSWORD: "Admin123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  backend:
+    build:
+      context: ./backend/APIEccomerce
+    ports:
+      - "5000:8080"
+    container_name: api_backend
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=EccomerceDB;User Id=sa;Password=Admin123!;TrustServerCertificate=True;
+
+  frontend:
+    build:
+      context: ./frontend/AngularPcMatchUp
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    container_name: angular_frontend
+    depends_on:
+      - backend
+
+volumes:
+  sqldata:

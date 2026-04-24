@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AppSettings } from '../settings/appsettings';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { responseProducto } from '../interfaces/ResponseProducto';
 
@@ -9,7 +9,7 @@ import { responseProducto } from '../interfaces/ResponseProducto';
 })
 export class Productos {
   private http=inject(HttpClient);
-  private apiUrl=AppSettings.apiUrl;
+  private apiUrl=environment.apiUrl;
 
   constructor() {}
   lista():Observable<responseProducto>{
