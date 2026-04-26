@@ -1,4 +1,4 @@
-# 20-04-2026 Dockerfile para AngularPcMatchUp
+
 FROM node:20 AS build
 WORKDIR /app
 

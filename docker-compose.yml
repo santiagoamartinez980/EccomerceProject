@@ -1,5 +1,5 @@
 # 20-04-2026 Docker Compose para la aplicación de comercio electrónico con SQL Server, backend en .NET y frontend en Angular`
- version: '3.8'
+version: '3.8'
 
 services:
   db:

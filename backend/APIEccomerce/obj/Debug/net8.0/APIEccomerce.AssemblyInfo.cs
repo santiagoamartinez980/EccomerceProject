@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APIEccomerce")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+75fd6a9efdad0a163be608cf6b45eebdbe1720e9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+35f1aaf3a17e4fbc13e6d4e0c6ea43063cbab591")]
 [assembly: System.Reflection.AssemblyProductAttribute("APIEccomerce")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APIEccomerce")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
