@@ -6,57 +6,51 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace APIEccomerce.Custom
 {
-    public class Utilidades
+    public class Utilities
     {
         private readonly IConfiguration _config;
 
-        public Utilidades(IConfiguration config)
+        public Utilities(IConfiguration config)
         {
             _config = config;
         }
 
-        public string HashearClave(string clave)
+        public string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(clave);
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public bool VerificarClave(string clave, string hash)
+        public bool VerifyPassword(string password, string hash)
         {
-            return BCrypt.Net.BCrypt.Verify(clave, hash);
+            return BCrypt.Net.BCrypt.Verify(password, hash);
         }
 
-        public string GenerarJwt(Usuario usuario)
+        public string GenerateJwt(User user)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,
-                          usuario.IdUsuario.ToString()),
-                new Claim(ClaimTypes.Email, usuario.Correo),
-                new Claim(ClaimTypes.Role, usuario.Rol.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-   
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
 
-            
             var creds = new SigningCredentials(
                 key, SecurityAlgorithms.HmacSha256);
 
-            
             var token = new JwtSecurityToken(
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: creds
             );
 
-            
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public bool validarToken(string token)
+        public bool ValidateToken(string token)
         {
-            var claimsPrincipal = new ClaimsPrincipal();
             var tokenHandler = new JwtSecurityTokenHandler();
             var validationParameters = new TokenValidationParameters
             {
@@ -71,10 +65,10 @@ namespace APIEccomerce.Custom
 
             try
             {
-                claimsPrincipal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(token, validationParameters, out SecurityToken _);
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

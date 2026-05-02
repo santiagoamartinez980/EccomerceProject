@@ -22,117 +22,117 @@ namespace APIEccomerce.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("APIEccomerce.Models.Categoria", b =>
+            modelBuilder.Entity("APIEccomerce.Models.Category", b =>
                 {
-                    b.Property<int>("IdCategoria")
+                    b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCategoria"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("IdCategoria");
+                    b.HasKey("CategoryId");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("APIEccomerce.Models.Producto", b =>
+            modelBuilder.Entity("APIEccomerce.Models.Product", b =>
                 {
-                    b.Property<int>("IdProducto")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdProducto"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IdCategoria")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImagenUrl")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Precio")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
-                    b.HasKey("IdProducto");
+                    b.HasKey("ProductId");
 
-                    b.HasIndex("IdCategoria");
+                    b.HasIndex("CategoryId");
 
-                    b.ToTable("Productos");
+                    b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("APIEccomerce.Models.Usuario", b =>
+            modelBuilder.Entity("APIEccomerce.Models.User", b =>
                 {
-                    b.Property<int>("IdUsuario")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<string>("Apellidos")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Clave")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Correo")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Rol")
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("IdUsuario");
+                    b.HasKey("UserId");
 
-                    b.HasIndex("Correo")
+                    b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("APIEccomerce.Models.Producto", b =>
+            modelBuilder.Entity("APIEccomerce.Models.Product", b =>
                 {
-                    b.HasOne("APIEccomerce.Models.Categoria", "Categoria")
-                        .WithMany("Productos")
-                        .HasForeignKey("IdCategoria")
+                    b.HasOne("APIEccomerce.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Categoria");
+                    b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("APIEccomerce.Models.Categoria", b =>
+            modelBuilder.Entity("APIEccomerce.Models.Category", b =>
                 {
-                    b.Navigation("Productos");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

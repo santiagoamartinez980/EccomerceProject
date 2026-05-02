@@ -1,8 +1,8 @@
 ﻿namespace APIEccomerce.Models
 {
-    public enum Rol
+    public enum Role
     {
         Admin,
-        Usuario
+        User
     }
 }

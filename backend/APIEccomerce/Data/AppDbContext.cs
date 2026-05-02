@@ -1,39 +1,41 @@
 using APIEccomerce.Models;
 using Microsoft.EntityFrameworkCore;
+
 namespace APIEccomerce.Data
 {
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-        public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Producto> Productos { get; set; }
-        public DbSet<Categoria> Categorias { get; set; }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Categoria>()
-                .HasKey(c => c.IdCategoria);
+            modelBuilder.Entity<Category>()
+                .HasKey(c => c.CategoryId);
 
-            modelBuilder.Entity<Producto>()
-                .HasKey(p => p.IdProducto);
+            modelBuilder.Entity<Product>()
+                .HasKey(p => p.ProductId);
 
-            modelBuilder.Entity<Producto>()
-                .HasOne(p => p.Categoria)
-                .WithMany(c => c.Productos)
-                .HasForeignKey(p => p.IdCategoria);
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId);
 
-            modelBuilder.Entity<Usuario>()
-                .HasKey(u => u.IdUsuario);
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.UserId);
 
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.Rol)
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<Usuario>()
-                .HasIndex(u => u.Correo)
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
                 .IsUnique();
         }
     }
 }
-
