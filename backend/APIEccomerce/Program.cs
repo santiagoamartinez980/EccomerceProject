@@ -17,10 +17,13 @@ Console.WriteLine($">>> Cadena de conexión: {connStr}");
 //Dtos Mapping
 // Repositorios
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Servicios
 builder.Services.AddScoped<IProductService, ProductService>();
-
+builder.Services.AddScoped<IAccessService, AccessService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>
