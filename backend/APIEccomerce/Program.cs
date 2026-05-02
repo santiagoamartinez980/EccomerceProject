@@ -3,12 +3,24 @@ using APIEccomerce.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using APIEccomerce.Repositories.Interfaces;
+using APIEccomerce.Repositories;
+using APIEccomerce.Services;
+using APIEccomerce.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($">>> Cadena de conexión: {connStr}");
+
+//Dtos Mapping
+// Repositorios
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// Servicios
+builder.Services.AddScoped<IProductService, ProductService>();
+
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -21,7 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
         )
     ));
 
-builder.Services.AddScoped<Utilidades>();
+builder.Services.AddScoped<Utilities>();
 
 // JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
