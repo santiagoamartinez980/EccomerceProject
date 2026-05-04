@@ -25,3 +25,5 @@ dist/
 Thumbs.db
 
 .vscode/
+
+appsettings.Development.json

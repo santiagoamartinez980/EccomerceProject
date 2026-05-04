@@ -9,13 +9,10 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root',
 })
 export class ProductsApiService {
-  delete(idProducto: number) {
-    throw new Error('Method not implemented.');
-  }
-  private http=inject(HttpClient);
-  private apiUrl=environment.apiUrl+'/Producto';
-  
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl + '/Producto';
 
+  
   getAll(): Observable<ProductInterface[]> {
 
     return this.http
@@ -24,13 +21,6 @@ export class ProductsApiService {
 
   }
 
-  getList(): Observable<ProductInterface[]> {
-
-    return this.http
-      .get<ApiResponse<ProductInterface[]>>(`${this.apiUrl}/lista`)
-      .pipe(map(res => res.value));
-
-  }
 
   getById(id: number): Observable<ProductInterface> {
 

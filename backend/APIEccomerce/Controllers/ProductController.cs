@@ -1,4 +1,5 @@
 ﻿using APIEccomerce.Models.DTOs;
+using APIEccomerce.Services;
 using APIEccomerce.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,21 @@ namespace APIEccomerce.Controllers
             var products = await _service.ListIsActive();
             return Ok(new { value = products });
         }
+
+
+        [HttpPost("upload-image")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UploadImage(
+        [FromServices] ICloudinaryService cloudinary,
+            IFormFile file)
+        {
+                if (file == null || file.Length == 0)
+                    return BadRequest(new { message = "No se envió ninguna imagen" }); 
+            
+            var url = await cloudinary.UploadImageAsync(file);
+            return Ok(new { url });
+        }
+
 
         [HttpGet("lista")]
         [AllowAnonymous]
@@ -77,6 +93,13 @@ namespace APIEccomerce.Controllers
             if (product == null)
                 return NotFound(new { mensaje = "Producto no encontrado" });
             return Ok(new { value = product });
+        }
+        [HttpGet("admin/")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> getAllAdmin()
+        {
+            var products = await _service.getAllAdmin();
+            return Ok(new { value = products });
         }
 
         [HttpPost]

@@ -60,7 +60,12 @@ namespace APIEccomerce.Services
 
             return Map(product);
         }
+        public async Task<List<ProductResponseDto>> getAllAdmin()
+        {
+            var products = await _repo.getAllAdmin();
 
+            return products.Select(Map).ToList();
+        }
         public async Task<ProductResponseDto> Create(CreateProductDto dto)
         {
             var product = new Product

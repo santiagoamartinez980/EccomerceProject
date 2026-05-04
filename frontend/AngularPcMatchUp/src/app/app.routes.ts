@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Iniciocomponent } from './pages/inicio/inicioComponent';
 import { authGuard } from './core/guards/auth-guard';
 import { Login } from './features/auth/pages/login/login';
 import { Register } from './features/auth/pages/register/register';

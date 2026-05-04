@@ -12,6 +12,7 @@ namespace APIEccomerce.Services.Interfaces
         Task<List<ProductResponseDto>> SearchByName(string name);
 
         // admin
+        Task<List<ProductResponseDto>> getAllAdmin();
         Task<ProductResponseDto?> GetByIdAdmin(int id);
         Task<ProductResponseDto> Create(CreateProductDto dto);
         Task<ProductResponseDto?> Update(int id, UpdateProductDto dto);

@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { ProductInterface } from '../interfaces/product.interface';
 import { CreateProductDto } from '../interfaces/create-product.dto';
 import { UpdateProductDto } from '../interfaces/update-product.dto';
+import { ApiResponse } from '../interfaces/api-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,13 @@ export class ProductsAdminService{
   private http=inject(HttpClient);
   private base=environment.apiUrl+'/Producto';
   
+  getAlladmin(): Observable<ProductInterface[]> {
+  
+      return this.http
+        .get<ApiResponse<ProductInterface[]>>(`${this.base}/Admin`)
+        .pipe(map(res => res.value));
+  
+    }
   create(payload: CreateProductDto): Observable<ProductInterface> {
     return this.http
       .post<{ value: ProductInterface }>(this.base, payload)

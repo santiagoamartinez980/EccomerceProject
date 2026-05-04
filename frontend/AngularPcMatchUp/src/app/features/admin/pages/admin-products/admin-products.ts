@@ -67,7 +67,7 @@ export class AdminProductsComponent implements OnInit {
 
   loadAll(): void {
     this.loading.set(true);
-    this.productsService.getAll().subscribe({
+    this.adminProductsService.getAlladmin().subscribe({
       next: (data) => { this.products.set(data); this.loading.set(false); },
       error: () => { this.snack.open('Error al cargar productos', 'OK', { duration: 3000 }); this.loading.set(false); },
     });

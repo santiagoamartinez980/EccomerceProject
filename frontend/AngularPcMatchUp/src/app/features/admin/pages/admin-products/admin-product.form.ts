@@ -12,6 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { CloudinaryUploadService } from '../../services/cloudinary-upload.service';
+
 import { ProductsAdminService } from '../../../products/services/products-admin.service';
 import {ProductInterface} from '../../../products/interfaces/product.interface';
 import { CategoryInterface } from '../../../categories/interfaces/category.interface';
@@ -35,63 +37,79 @@ import { CategoryInterface } from '../../../categories/interfaces/category.inter
       <mat-dialog-content>
         <form [formGroup]="form" class="product-form">
 
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" maxlength="50" />
+          @if (form.get('nombre')?.hasError('required') && form.get('nombre')?.touched) {
+            <mat-error>El nombre es requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="descripcion" rows="3" maxlength="100"></textarea>
+        </mat-form-field>
+
+        <div class="form-row">
           <mat-form-field appearance="outline">
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="nombre" maxlength="50" />
-            @if (form.get('nombre')?.hasError('required') && form.get('nombre')?.touched) {
-              <mat-error>El nombre es requerido</mat-error>
+            <mat-label>Precio (COP)</mat-label>
+            <input matInput type="number" formControlName="precio" min="0.01" />
+            @if (form.get('precio')?.hasError('required') && form.get('precio')?.touched) {
+              <mat-error>El precio es requerido</mat-error>
+            }
+            @if (form.get('precio')?.hasError('min')) {
+              <mat-error>Debe ser mayor a 0</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Descripción</mat-label>
-            <textarea matInput formControlName="descripcion" rows="3" maxlength="100"></textarea>
-          </mat-form-field>
-
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Precio (COP)</mat-label>
-              <input matInput type="number" formControlName="precio" min="0.01" />
-              @if (form.get('precio')?.hasError('required') && form.get('precio')?.touched) {
-                <mat-error>El precio es requerido</mat-error>
-              }
-              @if (form.get('precio')?.hasError('min')) {
-                <mat-error>Debe ser mayor a 0</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Stock</mat-label>
-              <input matInput type="number" formControlName="stock" min="0" />
-              @if (form.get('stock')?.hasError('required') && form.get('stock')?.touched) {
-                <mat-error>El stock es requerido</mat-error>
-              }
-            </mat-form-field>
-          </div>
-
-          <mat-form-field appearance="outline">
-            <mat-label>URL de imagen</mat-label>
-            <input matInput formControlName="imagenUrl" />
-            <mat-icon matSuffix>image</mat-icon>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Categoría</mat-label>
-            <mat-select formControlName="idCategoria">
-              @for (cat of data.categories; track cat.categoryId) {
-                <mat-option [value]="cat.categoryId">{{ cat.name }}</mat-option>
-              }
-            </mat-select>
-            @if (form.get('idCategoria')?.hasError('required') && form.get('idCategoria')?.touched) {
-              <mat-error>Selecciona una categoría</mat-error>
+            <mat-label>Stock</mat-label>
+            <input matInput type="number" formControlName="stock" min="0" />
+            @if (form.get('stock')?.hasError('required') && form.get('stock')?.touched) {
+              <mat-error>El stock es requerido</mat-error>
             }
           </mat-form-field>
+        </div>
 
-          <mat-slide-toggle formControlName="activo" color="primary">
-            Producto activo
-          </mat-slide-toggle>
+        <!-- Input oculto -->
+        <input #fileInput type="file" accept="image/*" style="display:none"
+              (change)="onFileSelected($event)" />
 
-        </form>
+        <!-- Preview + botón -->
+        <div class="image-upload-field">
+          @if (form.get('imagenUrl')?.value) {
+            <img [src]="form.get('imagenUrl')?.value" class="image-preview" />
+          } @else {
+            <div class="image-placeholder">
+              <mat-icon>image</mat-icon>
+              <span>Sin imagen</span>
+            </div>
+          }
+          <button mat-stroked-button type="button"
+                  [disabled]="uploading()"
+                  (click)="fileInput.click()">
+            @if (uploading()) { <mat-spinner diameter="18" /> }
+            @else { <ng-container><mat-icon>upload</mat-icon> Subir imagen</ng-container> }
+          </button>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="idCategoria">
+            @for (cat of data.categories; track cat.categoryId) {
+              <mat-option [value]="cat.categoryId">{{ cat.name }}</mat-option>
+            }
+          </mat-select>
+          @if (form.get('idCategoria')?.hasError('required') && form.get('idCategoria')?.touched) {
+            <mat-error>Selecciona una categoría</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-slide-toggle formControlName="activo" color="primary">
+          Producto activo
+        </mat-slide-toggle>
+
+</form>
       </mat-dialog-content>
 
       <mat-dialog-actions class="dialog-actions">
@@ -113,6 +131,10 @@ import { CategoryInterface } from '../../../categories/interfaces/category.inter
     .product-form mat-form-field { width: 100%; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dialog-actions { padding: 16px 24px !important; justify-content: flex-end; gap: 8px; }
+    .image-upload-field { display: flex; flex-direction: column; gap: 8px; }
+    .image-preview { width: 100%; max-height: 180px; object-fit: contain; border-radius: 8px; border: 1px solid #e0e0e0; }
+    .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 120px; border: 2px dashed #e0e0e0; border-radius: 8px; color: #9e9e9e; }
+    .image-placeholder mat-icon { font-size: 2rem; width: 2rem; height: 2rem; }
 
     @media (max-width: 540px) {
       .form-dialog { min-width: unset; }
@@ -123,6 +145,8 @@ import { CategoryInterface } from '../../../categories/interfaces/category.inter
 export class AdminProductForm implements OnInit {
   readonly data: { product: ProductInterface | null; categories: CategoryInterface[] } =
     inject(MAT_DIALOG_DATA);
+  private readonly cloudinary = inject(CloudinaryUploadService);
+  uploading = signal(false);
   private readonly dialogRef = inject(MatDialogRef<AdminProductForm>);
   private readonly service = inject(ProductsAdminService);
   private readonly snack = inject(MatSnackBar);
@@ -155,6 +179,24 @@ export class AdminProductForm implements OnInit {
       });
     }
   }
+
+onFileSelected(event: Event): void {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  this.uploading.set(true);
+
+  this.cloudinary.upload(file).subscribe({
+    next: (url: string) => {
+      this.form.patchValue({ imagenUrl: url });
+      this.uploading.set(false);
+    },
+    error: () => {
+      this.snack.open('Error al subir la imagen', 'OK', { duration: 3000 });
+      this.uploading.set(false);
+    }
+  });
+}
+
 
   save(): void {
     if (this.form.invalid) return;

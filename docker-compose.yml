@@ -36,6 +36,9 @@ services:
         condition: service_healthy
     environment:
         ConnectionStrings__DefaultConnection: "Server=db,1433;Database=EccomerceDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+        Cloudinary__CloudName: ${CLOUDINARY_CLOUD_NAME}
+        Cloudinary__ApiKey: ${CLOUDINARY_API_KEY}
+        Cloudinary__ApiSecret: ${CLOUDINARY_API_SECRET}
     networks:
       - app_network
     restart: unless-stopped

@@ -11,6 +11,7 @@ namespace APIEccomerce.Repositories.Interfaces
         Task<Product?> GetByIdPublic(int id);
         //ADMIN
         Task<Product?> GetByIdAdmin(int id);
+        Task<List<Product>> getAllAdmin();
         Task<Product> Create(Product producto);
         Task<Product?> Update(Product producto);
         Task<bool> Delete(int id);

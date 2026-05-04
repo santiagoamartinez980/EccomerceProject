@@ -64,6 +64,13 @@ namespace APIEccomerce.Repositories
                 .FirstOrDefaultAsync(p => p.ProductId == id);
         }
 
+        public async Task<List<Product>> getAllAdmin()
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .ToListAsync();
+        }
+
         // =========================
         // ➕ CREAR PRODUCTO
         // =========================
