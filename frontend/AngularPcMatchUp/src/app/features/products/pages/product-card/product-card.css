@@ -1,0 +1,213 @@
+/* product-card.component.css */
+ 
+:host {
+  display: block;
+}
+ 
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.product-card {
+  position: relative;
+  cursor: pointer;
+  border-radius: 18px !important;
+  overflow: hidden;
+  border: 1px solid #e8e8f0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+ 
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(80, 80, 180, 0.13) !important;
+}
+ 
+/* ── Imagen ──────────────────────────────────────────────────────────────── */
+.card-image-wrapper {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+  background: #f3f3fb;
+  flex-shrink: 0;
+}
+ 
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+ 
+.product-card:hover .card-image {
+  transform: scale(1.06);
+}
+ 
+.card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef0ff 0%, #f3eeff 100%);
+}
+ 
+.card-image-placeholder mat-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: #b0b8e8;
+}
+ 
+/* Badges de stock */
+.stock-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  backdrop-filter: blur(4px);
+}
+ 
+.badge-out {
+  background: rgba(229, 57, 53, 0.9);
+  color: white;
+}
+ 
+.badge-low {
+  background: rgba(251, 140, 0, 0.9);
+  color: white;
+}
+ 
+/* ── Body ────────────────────────────────────────────────────────────────── */
+.card-body {
+  padding: 14px 16px 16px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+}
+ 
+.category-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: #6c4de8;
+  background: #f0eeff;
+  padding: 2px 9px;
+  border-radius: 20px;
+  align-self: flex-start;
+}
+ 
+.product-name {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+ 
+.product-desc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #7a7a9a;
+  line-height: 1.5;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+ 
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f8;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+ 
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #4a3fbf;
+  letter-spacing: -0.5px;
+}
+ 
+.stock-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+ 
+.stock-chip[data-level='ok'] {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+ 
+.stock-chip[data-level='low'] {
+  background: #fff3e0;
+  color: #e65100;
+}
+ 
+.stock-chip[data-level='out'] {
+  background: #ffebee;
+  color: #c62828;
+}
+ 
+.stock-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+}
+ 
+/* ── Hover overlay ───────────────────────────────────────────────────────── */
+.card-hover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(74, 63, 191, 0.92), transparent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+ 
+.product-card:hover .card-hover-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+ 
+.card-hover-overlay mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

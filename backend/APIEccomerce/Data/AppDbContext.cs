@@ -14,6 +14,10 @@ namespace APIEccomerce.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Agrega esta línea para el campo Price de Product
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(18, 2); // 18 dígitos en total, 2 decimales
 
             modelBuilder.Entity<Category>()
                 .HasKey(c => c.CategoryId);

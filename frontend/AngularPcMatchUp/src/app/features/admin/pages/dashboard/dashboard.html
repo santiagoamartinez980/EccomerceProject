@@ -1,0 +1,22 @@
+<!-- features/admin/pages/dashboard/dashboard.component.html -->
+
+<div class="dashboard-wrapper">
+
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-sub">Bienvenido al panel de administración</p>
+  </div>
+
+  <div class="shortcuts-grid">
+    @for (item of shortcuts; track item.route) {
+      <div class="shortcut-card" [attr.data-color]="item.color" (click)="go(item.route)">
+        <div class="shortcut-icon">
+          <mat-icon>{{ item.icon }}</mat-icon>
+        </div>
+        <span class="shortcut-label">{{ item.label }}</span>
+        <mat-icon class="shortcut-arrow">arrow_forward</mat-icon>
+      </div>
+    }
+  </div>
+
+</div>

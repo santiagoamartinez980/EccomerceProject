@@ -1,0 +1,154 @@
+<!-- product-detail.component.html -->
+ 
+<div class="detail-wrapper">
+ 
+  <!-- Botón volver -->
+  <button mat-button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver al catálogo
+  </button>
+ 
+  <!-- ══ CARGANDO ═══════════════════════════════════════════════════════════ -->
+  @if (loading()) {
+    <div class="state-box">
+      <mat-spinner diameter="52" />
+      <p class="state-text">Cargando producto…</p>
+    </div>
+  }
+ 
+  <!-- ══ ERROR ══════════════════════════════════════════════════════════════ -->
+  @if (error() && !loading()) {
+    <div class="state-box state-error">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p class="state-text">{{ error() }}</p>
+      <button mat-flat-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Volver al catálogo
+      </button>
+    </div>
+  }
+ 
+  <!-- ══ DETALLE ════════════════════════════════════════════════════════════ -->
+  @if (!loading() && !error() && product()) {
+    <div class="detail-layout">
+ 
+      <!-- ── Columna imagen ── -->
+      <div class="image-col">
+        <div class="image-container">
+          @if (product()!.imagenUrl && !imageError()) {
+            <img
+              [src]="product()!.imagenUrl"
+              [alt]="product()!.nombre"
+              class="product-image"
+              (error)="onImageError()"
+            />
+          } @else {
+            <div class="image-placeholder">
+              <mat-icon>inventory_2</mat-icon>
+              <span>Sin imagen</span>
+            </div>
+          }
+ 
+          <!-- Badge estado -->
+          @if (!product()!.activo) {
+            <span class="badge badge-inactive">Inactivo</span>
+          } @else if (product()!.stock === 0) {
+            <span class="badge badge-out">Agotado</span>
+          } @else if (product()!.stock <= 5) {
+            <span class="badge badge-low">Últimas unidades</span>
+          }
+        </div>
+ 
+        <!-- Info rápida debajo de imagen -->
+        <div class="quick-info">
+          <div class="quick-item">
+            <mat-icon>tag</mat-icon>
+            <span>ID #{{ product()!.idProducto }}</span>
+          </div>
+          <div class="quick-item">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ formatDate(product()!.fechaCreacion) }}</span>
+          </div>
+          <div class="quick-item">
+            <mat-icon [class]="'status-icon-' + (product()!.activo ? 'active' : 'inactive')">
+              {{ product()!.activo ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+            <span>{{ product()!.activo ? 'Activo' : 'Inactivo' }}</span>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- ── Columna info ── -->
+      <div class="info-col">
+ 
+        <!-- Categoría -->
+        @if (product()!.categoriaNombre) {
+          <span class="category-chip">
+            <mat-icon class="chip-icon">category</mat-icon>
+            {{ product()!.categoriaNombre }}
+          </span>
+        }
+ 
+        <!-- Nombre -->
+        <h1 class="product-title">{{ product()!.nombre }}</h1>
+ 
+        <!-- Precio -->
+        <div class="price-block">
+          <span class="price-label">Precio</span>
+          <span class="price-value">{{ formatPrice(product()!.precio) }}</span>
+        </div>
+ 
+        <mat-divider class="section-divider" />
+ 
+        <!-- Descripción -->
+        <div class="description-section">
+          <h3 class="section-title">
+            <mat-icon>description</mat-icon>
+            Descripción
+          </h3>
+          @if (product()!.descripcion) {
+            <p class="description-text">{{ product()!.descripcion }}</p>
+          } @else {
+            <p class="description-empty">Este producto no tiene descripción disponible.</p>
+          }
+        </div>
+ 
+        <mat-divider class="section-divider" />
+ 
+        <!-- Stock -->
+        <div class="stock-section">
+          <h3 class="section-title">
+            <mat-icon>inventory</mat-icon>
+            Disponibilidad
+          </h3>
+          <div class="stock-bar-wrap">
+            <div
+              class="stock-indicator"
+              [attr.data-level]="getStockLevel(product()!.stock)"
+            >
+              <mat-icon>
+                @if (product()!.stock === 0) { remove_shopping_cart }
+                @else if (product()!.stock <= 5) { warning }
+                @else { check_circle }
+              </mat-icon>
+              <span>{{ getStockText(product()!.stock) }}</span>
+            </div>
+ 
+            <!-- Barra visual de stock -->
+            @if (product()!.stock > 0) {
+              <div class="stock-bar">
+                <div
+                  class="stock-bar-fill"
+                  [attr.data-level]="getStockLevel(product()!.stock)"
+                  [style.width.%]="product()!.stock >= 100 ? 100 : product()!.stock"
+                ></div>
+              </div>
+            }
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  }
+ 
+</div>
+ 

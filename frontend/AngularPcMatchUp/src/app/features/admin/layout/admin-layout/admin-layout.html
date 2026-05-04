@@ -1,0 +1,79 @@
+<!-- features/admin/layout/admin-layout.component.html -->
+
+<div class="admin-shell" [class.collapsed]="sidebarCollapsed()">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <!-- Logo / Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      @if (!sidebarCollapsed()) {
+        <span class="brand-name">Admin Panel</span>
+      }
+      <button mat-icon-button class="collapse-btn" (click)="toggleSidebar()"
+              [matTooltip]="sidebarCollapsed() ? 'Expandir' : 'Colapsar'">
+        <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider class="brand-divider" />
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.route) {
+        <a class="nav-item"
+           [class.active]="isActive(item.route)"
+           [routerLink]="item.route"
+           [matTooltip]="sidebarCollapsed() ? item.label : ''"
+           matTooltipPosition="right">
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          @if (!sidebarCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+          }
+          @if (isActive(item.route) && !sidebarCollapsed()) {
+            <span class="active-dot"></span>
+          }
+        </a>
+      }
+    </nav>
+
+    <!-- Footer del sidebar -->
+    <div class="sidebar-footer">
+      <mat-divider />
+
+      <div class="user-info" [matTooltip]="sidebarCollapsed() ? adminEmail() : ''">
+        <div class="user-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        @if (!sidebarCollapsed()) {
+          <div class="user-meta">
+            <span class="user-role">Administrador</span>
+            <span class="user-email">{{ adminEmail() }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="footer-actions">
+        <button mat-icon-button (click)="goToCatalog()"
+                matTooltip="Ver catálogo" matTooltipPosition="right">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button mat-icon-button (click)="logout()"
+                matTooltip="Cerrar sesión" matTooltipPosition="right"
+                class="logout-btn">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main class="admin-main">
+    <router-outlet />
+  </main>
+
+</div>

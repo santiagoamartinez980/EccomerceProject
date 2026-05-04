@@ -1,0 +1,173 @@
+<!-- product-catalog.component.html -->
+ 
+<div class="catalog-wrapper">
+ 
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+  <header class="catalog-header">
+    <div class="header-top">
+      <div class="brand-area">
+        <div class="brand-icon-wrap">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <div>
+          <h1 class="catalog-title">Catálogo</h1>
+          <span class="catalog-subtitle">
+            {{ filteredProducts().length }}
+            {{ filteredProducts().length === 1 ? 'producto' : 'productos' }}
+          </span>
+        </div>
+      </div>
+ 
+      <button
+        mat-icon-button
+        [matTooltip]="viewMode() === 'grid' ? 'Vista lista' : 'Vista grilla'"
+        (click)="toggleViewMode()"
+        class="view-toggle-btn"
+      >
+        <mat-icon>{{ viewMode() === 'grid' ? 'view_list' : 'grid_view' }}</mat-icon>
+      </button>
+    </div>
+ 
+    <!-- Buscador -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar producto…</mat-label>
+      <mat-icon matPrefix class="search-prefix-icon">search</mat-icon>
+      <input
+        matInput
+        [value]="searchTerm()"
+        (input)="onSearchInput($any($event.target).value)"
+        placeholder="Nombre del producto…"
+        autocomplete="off"
+      />
+      @if (searchTerm()) {
+        <button mat-icon-button matSuffix (click)="clearFilters()" matTooltip="Limpiar búsqueda">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+ 
+    <!-- Chips de categoría -->
+    @if (categories().length > 0) {
+      <div class="chips-scroll">
+        <mat-chip-set>
+          <mat-chip
+            [class.chip-selected]="selectedCategory() === ''"
+            (click)="filterByCategory('')"
+          >
+            <mat-icon matChipAvatar>all_inclusive</mat-icon>
+            Todos
+          </mat-chip>
+ 
+          @for (cat of categories(); track cat) {
+            <mat-chip
+              [class.chip-selected]="selectedCategory() === cat"
+              (click)="filterByCategory(cat.toString())"
+            >
+              {{ cat }}
+            </mat-chip>
+          }
+        </mat-chip-set>
+      </div>
+    }
+  </header>
+ 
+  <mat-divider class="header-divider" />
+ 
+  <!-- ══ ESTADO: CARGANDO ═══════════════════════════════════════════════════ -->
+  @if (loading()) {
+    <div class="state-box">
+      <mat-spinner diameter="48" />
+      <p class="state-text">Cargando productos…</p>
+    </div>
+  }
+ 
+  <!-- ══ ESTADO: ERROR ══════════════════════════════════════════════════════ -->
+  @if (error() && !loading()) {
+    <div class="state-box state-error">
+      <mat-icon class="state-icon error-icon">error_outline</mat-icon>
+      <p class="state-text">{{ error() }}</p>
+      <button mat-stroked-button color="warn" (click)="loadProducts()">
+        <mat-icon>refresh</mat-icon> Reintentar
+      </button>
+    </div>
+  }
+ 
+  <!-- ══ ESTADO: SIN RESULTADOS ════════════════════════════════════════════ -->
+  @if (!loading() && !error() && filteredProducts().length === 0) {
+    <div class="state-box">
+      <mat-icon class="state-icon">search_off</mat-icon>
+      <p class="state-text">
+        Sin resultados
+        @if (searchTerm()) { para <strong>"{{ searchTerm() }}"</strong> }
+      </p>
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear_all</mat-icon> Limpiar filtros
+      </button>
+    </div>
+  }
+ 
+  <!-- ══ GRILLA ════════════════════════════════════════════════════════════ -->
+  @if (!loading() && !error() && filteredProducts().length > 0) {
+ 
+    @if (viewMode() === 'grid') {
+      <div class="products-grid">
+        @for (product of filteredProducts(); track trackById($index, product)) {
+          <app-product-card
+            [product]="product"
+            (cardClick)="onCardClick($event)"
+            class="card-item"
+          />
+        }
+      </div>
+    }
+ 
+    <!-- ══ LISTA ══════════════════════════════════════════════════════════ -->
+    @if (viewMode() === 'list') {
+      <div class="products-list">
+        @for (product of filteredProducts(); track trackById($index, product)) {
+          <div class="list-row" (click)="onCardClick(product)">
+ 
+            <!-- Thumbnail -->
+            <div class="list-thumb">
+              @if (product.imagenUrl) {
+                <img [src]="product.imagenUrl" [alt]="product.nombre" loading="lazy" />
+              } @else {
+                <mat-icon>inventory_2</mat-icon>
+              }
+            </div>
+ 
+            <!-- Info -->
+            <div class="list-info">
+              @if (product.categoriaNombre) {
+                <span class="list-category">{{ product.categoriaNombre}}</span>
+              }
+              <h3 class="list-name">{{ product.nombre }}</h3>
+              @if (product.descripcion) {
+                <p class="list-desc">{{ product.descripcion }}</p>
+              }
+            </div>
+ 
+            <!-- Meta -->
+            <div class="list-meta">
+              <span class="list-price">
+                {{ product.precio | currency:'COP':'symbol':'1.0-0':'es-CO' }}
+              </span>
+              <span class="list-stock"
+                [class.stock-ok]="product.stock > 5"
+                [class.stock-low]="product.stock > 0 && product.stock <= 5"
+                [class.stock-out]="product.stock === 0">
+                @if (product.stock === 0) { Agotado }
+                @else if (product.stock <= 5) { Últimas {{ product.stock }} }
+                @else { {{ product.stock }} disp. }
+              </span>
+              <mat-icon class="list-arrow">chevron_right</mat-icon>
+            </div>
+ 
+          </div>
+        }
+      </div>
+    }
+ 
+  }
+ 
+</div>

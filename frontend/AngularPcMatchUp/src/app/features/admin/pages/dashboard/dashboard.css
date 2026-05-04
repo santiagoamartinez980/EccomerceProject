@@ -1,0 +1,72 @@
+/* features/admin/pages/dashboard/dashboard.component.css */
+
+.dashboard-wrapper {
+  padding: 36px 32px;
+  max-width: 900px;
+}
+
+.page-header { margin-bottom: 32px; }
+
+.page-title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.5px;
+}
+
+.page-sub {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.shortcut-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shortcut-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.shortcut-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.shortcut-card[data-color='blue']   .shortcut-icon { background: #eff6ff; color: #3b82f6; }
+.shortcut-card[data-color='purple'] .shortcut-icon { background: #f5f3ff; color: #7c3aed; }
+
+.shortcut-label {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.shortcut-arrow {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #cbd5e1;
+}

@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // CORS
 builder.Services.AddCors(opt => opt.AddPolicy("POLITICA_CORS", p =>
     p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-
+builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -96,5 +96,6 @@ app.UseSwaggerUI();
 app.UseCors("POLITICA_CORS");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.Run();

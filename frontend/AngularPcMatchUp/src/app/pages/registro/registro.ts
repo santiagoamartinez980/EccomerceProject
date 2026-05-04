@@ -1,6 +1,7 @@
+/*
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Acceso } from '../../services/acceso';
+import { Acceso } from '../../features/auth/services/';
 import { Router } from '@angular/router';
 
 import {MatCardModule} from '@angular/material/card';
@@ -53,3 +54,4 @@ export class Registro {
   }
 
 }
+*/

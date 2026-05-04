@@ -1,0 +1,57 @@
+<!-- product-card.component.html -->
+ 
+<mat-card class="product-card" matRipple (click)="onClick()">
+ 
+  <!-- Imagen -->
+  <div class="card-image-wrapper">
+    @if (product().imagenUrl) {
+      <img
+        [src]="product().imagenUrl"
+        [alt]="product().nombre"
+        class="card-image"
+        loading="lazy"
+      />
+    } @else {
+      <div class="card-image-placeholder">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+    }
+ 
+    <!-- Stock badge sobre la imagen -->
+    @if (product().stock === 0) {
+      <span class="stock-badge badge-out">Agotado</span>
+    } @else if (product().stock <= 5) {
+      <span class="stock-badge badge-low">Últimas unidades</span>
+    }
+  </div>
+ 
+  <mat-card-content class="card-body">
+ 
+    @if (product().categoriaNombre) {
+      <span class="category-tag">{{ product().categoriaNombre}}</span>
+    }
+ 
+    <h3 class="product-name">{{ product().nombre }}</h3>
+ 
+    @if (product().descripcion) {
+      <p class="product-desc">{{ product().descripcion }}</p>
+    }
+ 
+    <div class="card-footer">
+      <span class="product-price">{{ formatPrice(product().precio) }}</span>
+ 
+      <span class="stock-chip" [attr.data-level]="getStockLevel(product().stock)">
+        <mat-icon class="stock-icon">inventory</mat-icon>
+        {{ getStockLabel(product().stock) }}
+      </span>
+    </div>
+ 
+  </mat-card-content>
+ 
+  <!-- Indicador visual "ver más" -->
+  <div class="card-hover-overlay">
+    <mat-icon>arrow_forward</mat-icon>
+    <span>Ver detalle</span>
+  </div>
+ 
+</mat-card>

@@ -1,0 +1,79 @@
+<div class="registro-wrapper">
+  <mat-card class="registro-card">
+
+    <div class="registro-header">
+      <div class="logo-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h2>Crear una cuenta</h2>
+      <p>Completa tus datos para registrarte</p>
+    </div>
+
+    <mat-card-content>
+      <form [formGroup]="formRegistro" (ngSubmit)="registrarse()" class="registro-form">
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput placeholder="Juan" formControlName="nombre" />
+            <mat-icon matPrefix>badge</mat-icon>
+            @if (formRegistro.get('nombre')?.hasError('required') && formRegistro.get('nombre')?.touched) {
+              <mat-error>El nombre es requerido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Apellido</mat-label>
+            <input matInput placeholder="Pérez" formControlName="apellidos" />
+            <mat-icon matPrefix>badge</mat-icon>
+            @if (formRegistro.get('apellidos')?.hasError('required') && formRegistro.get('apellidos')?.touched) {
+              <mat-error>Los apellidos son requeridos</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" placeholder="ejemplo@correo.com" formControlName="correo" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (formRegistro.get('correo')?.hasError('required') && formRegistro.get('correo')?.touched) {
+            <mat-error>El correo es requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="clave" />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (formRegistro.get('clave')?.hasError('required') && formRegistro.get('clave')?.touched) {
+            <mat-error>La contraseña es requerida</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          type="submit"
+          class="btn-primary full-width"
+          [disabled]="formRegistro.invalid"
+        >
+          Registrarse
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="btn-secondary full-width"
+          (click)="volver()"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          Ya tengo una cuenta
+        </button>
+
+      </form>
+    </mat-card-content>
+
+  </mat-card>
+</div>

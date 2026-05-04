@@ -1,6 +1,7 @@
+/*
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Acceso } from '../../services/acceso';
+import { Acceso } from '../../features/auth/services/';
 import { Router } from '@angular/router';
 import { Login } from '../../interfaces/Login';
 
@@ -54,3 +55,4 @@ export class LoginComponent {
     this.router.navigate(['/Registro']);
   }
 }
+*/
