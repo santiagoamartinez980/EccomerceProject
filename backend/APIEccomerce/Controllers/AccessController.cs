@@ -79,7 +79,7 @@ namespace APIEccomerce.Controllers
             return Ok(new Response<bool>
             {
                 Value = isValid,
-                IsSuccess = true
+                IsSuccess = isValid
             });
         }
     }

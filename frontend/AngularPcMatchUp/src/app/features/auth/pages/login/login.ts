@@ -68,6 +68,6 @@ export class Login {
   }
   
   registrarse(){
-    this.router.navigate(['/registro']);
+    this.router.navigate(['/auth/registro']);
   }
 }

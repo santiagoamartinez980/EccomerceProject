@@ -39,7 +39,6 @@ namespace APIEccomerce.Services
         {
             return new CategoryDto
             {
-                CategoryId = c.CategoryId,
                 Name = c.Name
             };
         }

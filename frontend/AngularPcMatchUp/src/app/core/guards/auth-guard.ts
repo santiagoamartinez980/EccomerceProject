@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const tokenService = inject(TokenService);
   if (!token) {
-    router.navigate(['']);
+    router.navigate(['/auth/login']);
     return false;
   }
   return tokenService.validateToken(token).pipe(
@@ -17,13 +17,13 @@ export const authGuard: CanActivateFn = (route, state) => {
       if (data.isSuccess) {
         return true;
       } else {
-        router.navigate(['']);
+        router.navigate(['/auth/login']);
         return false;
       }
     }),
     catchError(err => {
       console.error('Error al validar el token:', err);
-      router.navigate(['']);
+      router.navigate(['/auth/login']);
       return of(false);
     })
   );

@@ -1,8 +1,10 @@
 // features/products/products.routes.ts
- 
+
 import { Routes } from '@angular/router';
- 
+import { authGuard } from '../../core/guards/auth-guard';
+
 export const PRODUCTS_ROUTES: Routes = [
+
   {
     path: '',
     loadComponent: () =>
@@ -11,8 +13,11 @@ export const PRODUCTS_ROUTES: Routes = [
       ),
     title: 'Catálogo de Productos',
   },
+
+  
   {
     path: ':id',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/product-detail/product-detail').then(
         (m) => m.ProductDetail
@@ -20,4 +25,3 @@ export const PRODUCTS_ROUTES: Routes = [
     title: 'Detalle del Producto',
   },
 ];
- 
