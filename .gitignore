@@ -1,3 +1,6 @@
+# ==============================
+# .NET / C#
+# ==============================
 bin/
 obj/
 *.user
@@ -6,24 +9,48 @@ obj/
 *.pdb
 *.exe
 *.dll
-
-.vs/
 *.sln.docstates
 
+# Visual Studio
+.vs/
 
+# VS Code
+.vscode/
+
+# ==============================
+# Angular / Node.js
+# ==============================
 node_modules/
 dist/
 .angular/
 .cache/
 
+# ==============================
+# SonarQube / SonarScanner
+# ==============================
+**/.sonarqube/
+**/.scannerwork/
+*.sonar_lock
+report-task.txt
+
+# ==============================
+# Logs
+# ==============================
 *.log
 
+# ==============================
+# Environment variables
+# ==============================
 .env
 .env.*
 
+# ==============================
+# OS files
+# ==============================
 .DS_Store
 Thumbs.db
 
-.vscode/
-
+# ==============================
+# Development configuration
+# ==============================
 appsettings.Development.json
