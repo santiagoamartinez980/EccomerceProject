@@ -14,12 +14,7 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Correo electrónico</mat-label>
-          <input
-            matInput
-            type="email"
-            placeholder="ejemplo@correo.com"
-            formControlName="correo"
-          />
+          <input matInput type="email" placeholder="ejemplo@correo.com" formControlName="correo"/>
           <mat-icon matPrefix>email</mat-icon>
           @if (formLogin.get('correo')?.hasError('required') && formLogin.get('correo')?.touched) {
             <mat-error>El correo es requerido</mat-error>
@@ -28,18 +23,9 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Contraseña</mat-label>
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="clave"
-          />
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="clave"/>
           <mat-icon matPrefix>lock</mat-icon>
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="hidePassword = !hidePassword"
-          >
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (formLogin.get('clave')?.hasError('required') && formLogin.get('clave')?.touched) {
@@ -47,21 +33,11 @@
           }
         </mat-form-field>
 
-        <button
-          mat-raised-button
-          type="submit"
-          class="btn-primary full-width"
-          [disabled]="formLogin.invalid"
-        >
+        <button mat-raised-button type="submit" class="btn-login full-width" [disabled]="formLogin.invalid">
           Iniciar sesión
         </button>
 
-        <button
-          mat-stroked-button
-          type="button"
-          class="btn-secondary full-width"
-          (click)="registrarse()"
-        >
+        <button mat-stroked-button type="button" class="btn-register full-width" (click)="registrarse()">
           Crear una cuenta
         </button>
 

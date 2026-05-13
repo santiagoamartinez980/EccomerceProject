@@ -1,1 +1,44 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="navbar-inner">
+
+    <!-- Marca -->
+    <a class="brand" routerLink="/">
+      <div class="brand-icon">
+        <mat-icon>{{ brandIcon() }}</mat-icon>
+      </div>
+      <span class="brand-name">{{ brandName() }}</span>
+    </a>
+
+    <!-- Links -->
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="link-active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+        Inicio
+      </a>
+      <a routerLink="/catalogo" routerLinkActive="link-active" class="nav-link">
+        Catálogo
+      </a>
+    </div>
+
+    <!-- Acciones -->
+    <div class="nav-actions">
+
+      <!-- Carrito -->
+      <a routerLink="/carrito" class="action-btn" matTooltip="Carrito">
+        <mat-icon>shopping_bag</mat-icon>
+      </a>
+
+      <!-- Sesión -->
+      @if (isLoggedIn()) {
+        <a routerLink="/perfil" class="action-btn profile-btn" matTooltip="Mi perfil">
+          <mat-icon>person</mat-icon>
+        </a>
+      } @else {
+        <a routerLink="/auth/login" class="btn-primary">
+          Iniciar sesión
+        </a>
+      }
+
+    </div>
+
+  </div>
+</nav>

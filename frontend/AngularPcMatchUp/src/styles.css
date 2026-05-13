@@ -5,3 +5,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .snack-success { background: #166534 !important; color: white !important; }
 .snack-error   { background: #991b1b !important; color: white !important; }
+
+
+:root {
+  --color-accent:          #69b46f;
+  --color-accent-hover:    #1a8e52;
+  --color-bg-primary:      #ffffff;
+  --color-bg-secondary:    #F7F5F2;
+  --color-text-primary:    #1a1a1a;
+  --color-text-secondary:  #888780;
+  --color-border:          rgba(0, 0, 0, 0.12);
+  --radius-sm:             8px;
+  --radius-md:             12px;
+  --radius-pill:           99px;
+  --font-main:             'Poppins', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}

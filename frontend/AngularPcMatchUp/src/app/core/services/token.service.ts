@@ -1,5 +1,5 @@
 
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 
@@ -25,7 +25,13 @@ export class TokenService {
 
   private apiUrl = environment.apiUrl;
 
-  constructor() {}
+  private _isLoggedIn = signal(false);
+  
+  readonly isLoggedIn$ = this._isLoggedIn.asReadonly();
+
+  constructor() {
+    this._isLoggedIn.set(this.isLoggedIn());
+  }
 
   validateToken(token: string) {
     return this.http.get(
@@ -39,10 +45,12 @@ export class TokenService {
 
   setToken(token: string): void {
     localStorage.setItem('token', token);
+    this._isLoggedIn.set(true);
   }
 
   removeToken(): void {
     localStorage.removeItem('token');
+    this._isLoggedIn.set(false);
   }
 
   decodeToken(): JwtPayload | null {

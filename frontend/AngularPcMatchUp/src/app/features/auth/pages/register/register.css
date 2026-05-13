@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5f5;
+  background: var(--color-bg-secondary);
   padding: 1rem;
 }
 
@@ -11,43 +11,46 @@
   width: 100%;
   max-width: 460px;
   padding: 2rem 1.5rem;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
+  border-radius: var(--radius-md) !important;
+  border: 0.5px solid var(--color-border) !important;
+  box-shadow: none !important;
+  background: var(--color-bg-primary) !important;
 }
 
 .registro-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 2rem;
 }
 
 .logo-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background-color: #1D9E75;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem;
+  margin-bottom: 16px;
 }
 
 .logo-icon mat-icon {
-  color: white;
-  font-size: 28px;
-  width: 28px;
-  height: 28px;
+  color: var(--color-accent);
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .registro-header h2 {
   font-size: 22px;
   font-weight: 500;
   margin: 0 0 4px;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
 }
 
 .registro-header p {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -67,40 +70,50 @@
   width: 100%;
 }
 
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-focus-outline-color: var(--color-accent);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-text-secondary);
+  --mdc-outlined-text-field-outline-color: var(--color-border);
+  --mdc-outlined-text-field-label-text-color: var(--color-text-secondary);
+  --mdc-outlined-text-field-input-text-color: var(--color-text-primary);
+}
+
 .btn-primary {
-  background-color: #1D9E75 !important;
-  color: white !important;
-  padding: 12px !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
-  border-radius: 8px !important;
+  height: 44px;
+  background: var(--color-accent) !important;
+  color: #fff !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: none !important;
+  font-weight: 500;
+  font-size: 14px;
   margin-top: 8px;
 }
 
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover) !important;
+}
+
 .btn-primary:disabled {
-  background-color: #b0b0b0 !important;
+  opacity: 0.4;
 }
 
 .btn-secondary {
-  border-color: #1D9E75 !important;
-  color: #1D9E75 !important;
-  padding: 12px !important;
-  font-size: 15px !important;
-  border-radius: 8px !important;
+  height: 44px;
+  border: 0.5px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--color-text-primary) !important;
+  font-size: 14px;
+  font-weight: 400;
+  box-shadow: none !important;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
-::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
-::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
-::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
-  border-color: #1D9E75 !important;
-}
-
-::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
-  color: #1D9E75 !important;
+.btn-secondary:hover {
+  border-color: var(--color-text-secondary) !important;
+  background: var(--color-bg-secondary) !important;
 }
 
 @media (max-width: 480px) {

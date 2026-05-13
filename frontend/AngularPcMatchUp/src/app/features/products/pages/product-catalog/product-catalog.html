@@ -1,8 +1,6 @@
-<!-- product-catalog.component.html -->
- 
 <div class="catalog-wrapper">
- 
-  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+
+  <!-- ══ HEADER ══ -->
   <header class="catalog-header">
     <div class="header-top">
       <div class="brand-area">
@@ -17,7 +15,7 @@
           </span>
         </div>
       </div>
- 
+
       <button
         mat-icon-button
         [matTooltip]="viewMode() === 'grid' ? 'Vista lista' : 'Vista grilla'"
@@ -27,25 +25,41 @@
         <mat-icon>{{ viewMode() === 'grid' ? 'view_list' : 'grid_view' }}</mat-icon>
       </button>
     </div>
- 
+
     <!-- Buscador -->
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar producto…</mat-label>
-      <mat-icon matPrefix class="search-prefix-icon">search</mat-icon>
-      <input
-        matInput
-        [value]="searchTerm()"
-        (input)="onSearchInput($any($event.target).value)"
-        placeholder="Nombre del producto…"
-        autocomplete="off"
-      />
-      @if (searchTerm()) {
-        <button mat-icon-button matSuffix (click)="clearFilters()" matTooltip="Limpiar búsqueda">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-    </mat-form-field>
- 
+    <!-- Buscador -->
+<div class="search-wrapper">
+  <div class="search-box" [class.search-focused]="searchFocused">
+    <mat-icon class="search-icon-left">search</mat-icon>
+    <input
+      class="search-input"
+      [value]="searchTerm()"
+      (input)="onSearchInput($any($event.target).value)"
+      (focus)="searchFocused = true"
+      (blur)="searchFocused = false"
+      placeholder="Buscar producto…"
+      autocomplete="off"
+    />
+    @if (searchTerm()) {
+      <button class="search-clear" (click)="clearFilters()" matTooltip="Limpiar">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
+  <div class="search-meta">
+    <span class="search-hint">
+      <mat-icon>keyboard_return</mat-icon>
+      Busca por nombre
+    </span>
+    @if (searchTerm()) {
+      <span class="search-result-count">
+        {{ filteredProducts().length }} resultado{{ filteredProducts().length === 1 ? '' : 's' }}
+      </span>
+    }
+  </div>
+</div>
+
     <!-- Chips de categoría -->
     @if (categories().length > 0) {
       <div class="chips-scroll">
@@ -54,10 +68,9 @@
             [class.chip-selected]="selectedCategory() === ''"
             (click)="filterByCategory('')"
           >
-            <mat-icon matChipAvatar>all_inclusive</mat-icon>
             Todos
           </mat-chip>
- 
+
           @for (cat of categories(); track cat) {
             <mat-chip
               [class.chip-selected]="selectedCategory() === cat"
@@ -70,29 +83,29 @@
       </div>
     }
   </header>
- 
+
   <mat-divider class="header-divider" />
- 
-  <!-- ══ ESTADO: CARGANDO ═══════════════════════════════════════════════════ -->
+
+  <!-- ══ CARGANDO ══ -->
   @if (loading()) {
     <div class="state-box">
-      <mat-spinner diameter="48" />
+      <mat-spinner diameter="36" />
       <p class="state-text">Cargando productos…</p>
     </div>
   }
- 
-  <!-- ══ ESTADO: ERROR ══════════════════════════════════════════════════════ -->
+
+  <!-- ══ ERROR ══ -->
   @if (error() && !loading()) {
-    <div class="state-box state-error">
-      <mat-icon class="state-icon error-icon">error_outline</mat-icon>
+    <div class="state-box">
+      <mat-icon class="state-icon">error_outline</mat-icon>
       <p class="state-text">{{ error() }}</p>
-      <button mat-stroked-button color="warn" (click)="loadProducts()">
+      <button mat-stroked-button (click)="loadProducts()" class="btn-ghost">
         <mat-icon>refresh</mat-icon> Reintentar
       </button>
     </div>
   }
- 
-  <!-- ══ ESTADO: SIN RESULTADOS ════════════════════════════════════════════ -->
+
+  <!-- ══ SIN RESULTADOS ══ -->
   @if (!loading() && !error() && filteredProducts().length === 0) {
     <div class="state-box">
       <mat-icon class="state-icon">search_off</mat-icon>
@@ -100,15 +113,15 @@
         Sin resultados
         @if (searchTerm()) { para <strong>"{{ searchTerm() }}"</strong> }
       </p>
-      <button mat-stroked-button (click)="clearFilters()">
+      <button mat-stroked-button (click)="clearFilters()" class="btn-ghost">
         <mat-icon>clear_all</mat-icon> Limpiar filtros
       </button>
     </div>
   }
- 
-  <!-- ══ GRILLA ════════════════════════════════════════════════════════════ -->
+
+  <!-- ══ GRILLA ══ -->
   @if (!loading() && !error() && filteredProducts().length > 0) {
- 
+
     @if (viewMode() === 'grid') {
       <div class="products-grid">
         @for (product of filteredProducts(); track trackById($index, product)) {
@@ -120,14 +133,13 @@
         }
       </div>
     }
- 
-    <!-- ══ LISTA ══════════════════════════════════════════════════════════ -->
+
+    <!-- ══ LISTA ══ -->
     @if (viewMode() === 'list') {
       <div class="products-list">
         @for (product of filteredProducts(); track trackById($index, product)) {
           <div class="list-row" (click)="onCardClick(product)">
- 
-            <!-- Thumbnail -->
+
             <div class="list-thumb">
               @if (product.imagenUrl) {
                 <img [src]="product.imagenUrl" [alt]="product.nombre" loading="lazy" />
@@ -135,19 +147,17 @@
                 <mat-icon>inventory_2</mat-icon>
               }
             </div>
- 
-            <!-- Info -->
+
             <div class="list-info">
               @if (product.categoriaNombre) {
-                <span class="list-category">{{ product.categoriaNombre}}</span>
+                <span class="list-category">{{ product.categoriaNombre }}</span>
               }
               <h3 class="list-name">{{ product.nombre }}</h3>
               @if (product.descripcion) {
                 <p class="list-desc">{{ product.descripcion }}</p>
               }
             </div>
- 
-            <!-- Meta -->
+
             <div class="list-meta">
               <span class="list-price">
                 {{ product.precio | currency:'COP':'symbol':'1.0-0':'es-CO' }}
@@ -160,14 +170,15 @@
                 @else if (product.stock <= 5) { Últimas {{ product.stock }} }
                 @else { {{ product.stock }} disp. }
               </span>
-              <mat-icon class="list-arrow">chevron_right</mat-icon>
             </div>
- 
+
+            <mat-icon class="list-arrow">chevron_right</mat-icon>
+
           </div>
         }
       </div>
     }
- 
+
   }
- 
+
 </div>
