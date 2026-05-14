@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIEccomerce", "APIEccomerce.csproj", "{E37CE663-FEF9-9DFF-106C-524851165A83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIEccomerce.Tests", "..\APIEccomerce.Tests\APIEccomerce.Tests.csproj", "{8CC4FE15-494F-4F39-B58C-8FAD2C5F5386}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{E37CE663-FEF9-9DFF-106C-524851165A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E37CE663-FEF9-9DFF-106C-524851165A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E37CE663-FEF9-9DFF-106C-524851165A83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC4FE15-494F-4F39-B58C-8FAD2C5F5386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC4FE15-494F-4F39-B58C-8FAD2C5F5386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC4FE15-494F-4F39-B58C-8FAD2C5F5386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC4FE15-494F-4F39-B58C-8FAD2C5F5386}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
