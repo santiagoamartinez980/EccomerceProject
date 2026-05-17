@@ -12,7 +12,7 @@ namespace APIEccomerce.Models.DTOs
         public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("descripcion")]
-        [MaxLength(100)]
+        [MaxLength(1000)]
         [Required]
         public string Description { get; set; } = string.Empty;
 

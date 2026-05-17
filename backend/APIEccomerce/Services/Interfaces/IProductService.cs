@@ -6,8 +6,8 @@ namespace APIEccomerce.Services.Interfaces
     public interface IProductService
     {
         // catálogo público
-        Task<List<ProductResponseDto>> ListIsActive();
-        Task<ProductResponseDto?> GetByIdPublic(int id);
+        Task<List<ProductResponseDto>> ListIsActive(); //
+        Task<ProductResponseDto?> GetByIdPublic(int id);//
         Task<List<ProductResponseDto>> ListByCategory(string category);
         Task<List<ProductResponseDto>> SearchByName(string name);
 

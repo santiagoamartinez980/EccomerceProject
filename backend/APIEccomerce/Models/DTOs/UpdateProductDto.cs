@@ -10,7 +10,7 @@ namespace APIEccomerce.Models.DTOs
         public string? Name { get; set; }
 
         [JsonPropertyName("descripcion")]
-        [MaxLength(100)]
+        [MaxLength(1000)]
         public string? Description { get; set; }
 
         [JsonPropertyName("precio")]
