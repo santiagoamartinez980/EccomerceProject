@@ -58,7 +58,7 @@ namespace APIEccomerce.Tests
         public async Task Create_ReturnsCategoryDto_WhenCategoryIsCreated()
         {
             // Arrange
-            var dto = new CategoryDto { Name = "Hogar" };
+            var dto = new CreateCategoryDto { Name = "Hogar" };
             var createdCategory = new Category { Name = "Hogar" };
 
             _repoMock.Setup(r => r.Create(It.IsAny<Category>())).ReturnsAsync(createdCategory);
@@ -75,7 +75,7 @@ namespace APIEccomerce.Tests
         public async Task Create_CallsRepository_WithCorrectCategoryName()
         {
             // Arrange
-            var dto = new CategoryDto { Name = "Deportes" };
+            var dto = new CreateCategoryDto { Name = "Deportes" };
             var createdCategory = new Category { Name = "Deportes" };
 
             _repoMock.Setup(r => r.Create(It.IsAny<Category>())).ReturnsAsync(createdCategory);

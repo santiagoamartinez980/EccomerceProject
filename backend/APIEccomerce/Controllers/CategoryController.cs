@@ -1,4 +1,4 @@
-﻿using APIEccomerce.Models.DTOs;
+using APIEccomerce.Models.DTOs;
 using APIEccomerce.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +25,10 @@ namespace APIEccomerce.Controllers
             return Ok(new { value = categories });
         }
 
+        // [COMENTARIO DE EDICIÓN] 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CategoryDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
         {
             var category = await _service.Create(dto);
             return Ok(new { value = category });

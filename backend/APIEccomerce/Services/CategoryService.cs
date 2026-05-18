@@ -1,4 +1,4 @@
-﻿using APIEccomerce.Models;
+using APIEccomerce.Models;
 using APIEccomerce.Models.DTOs;
 using APIEccomerce.Repositories.Interfaces;
 using APIEccomerce.Services.Interfaces;
@@ -19,8 +19,10 @@ namespace APIEccomerce.Services
             return categories.Select(Map).ToList();
         }
 
-        public async Task<CategoryDto> Create(CategoryDto dto)
+        // [COMENTARIO DE EDICIÓN]
+        public async Task<CategoryDto> Create(CreateCategoryDto dto)
         {
+
             var category = new Category
             {
                 Name = dto.Name
@@ -34,11 +36,11 @@ namespace APIEccomerce.Services
             return await _repo.Delete(id);
         }
 
-        //mapeo
         private CategoryDto Map(Category c)
         {
             return new CategoryDto
             {
+                CategoryId = c.CategoryId,
                 Name = c.Name
             };
         }
