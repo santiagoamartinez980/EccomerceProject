@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace APIEccomerce.Custom
 {
-    public class Utilities
+    public class Utilities: IUtilities
     {
         private readonly IConfiguration _config;
 

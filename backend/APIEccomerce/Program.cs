@@ -1,12 +1,13 @@
 ﻿using APIEccomerce.Custom;
 using APIEccomerce.Data;
+using APIEccomerce.Interfaces;
+using APIEccomerce.Repositories;
+using APIEccomerce.Repositories.Interfaces;
+using APIEccomerce.Services;
+using APIEccomerce.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using APIEccomerce.Repositories.Interfaces;
-using APIEccomerce.Repositories;
-using APIEccomerce.Services;
-using APIEccomerce.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,12 +20,17 @@ Console.WriteLine($">>> Cadena de conexión: {connStr}");
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+
 
 // Servicios
 builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccessService, AccessService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUtilities, Utilities>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>

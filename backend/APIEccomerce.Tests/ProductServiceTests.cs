@@ -1,4 +1,5 @@
 ﻿using APIEccomerce.Models;
+using APIEccomerce.Models.DTOs;
 using APIEccomerce.Repositories.Interfaces;
 using APIEccomerce.Services;
 using FluentAssertions;
@@ -168,7 +169,235 @@ namespace APIEccomerce.Tests
             result.Should().BeNull();
         }
 
+        // =====================
+        // ListByCategory
+        // =====================
 
+        [Fact]
+        public async Task ListByCategory_ReturnsProducts_WhenCategoryExists()
+        {
+            // Arrange
+            var products = new List<Product>
+    {
+        new Product { ProductId = 1, Name = "Laptop", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } },
+        new Product { ProductId = 2, Name = "Mouse", Price = 120000, Stock = 50, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } }
+    };
+            _repoMock.Setup(r => r.ListByCategory("Electrónica")).ReturnsAsync(products);
+
+            // Act
+            var result = await _service.ListByCategory("Electrónica");
+
+            // Assert
+            result.Should().HaveCount(2);
+            result[0].CategoryName.Should().Be("Electrónica");
+        }
+
+        [Fact]
+        public async Task ListByCategory_ReturnsEmptyList_WhenCategoryHasNoProducts()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.ListByCategory("Vacia")).ReturnsAsync(new List<Product>());
+
+            // Act
+            var result = await _service.ListByCategory("Vacia");
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        // =====================
+        // SearchByName
+        // =====================
+
+        [Fact]
+        public async Task SearchByName_ReturnsProducts_WhenNameMatches()
+        {
+            // Arrange
+            var products = new List<Product>
+    {
+        new Product { ProductId = 1, Name = "Laptop Gamer", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } }
+    };
+            _repoMock.Setup(r => r.SearchByName("Laptop")).ReturnsAsync(products);
+
+            // Act
+            var result = await _service.SearchByName("Laptop");
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].Name.Should().Be("Laptop Gamer");
+        }
+
+        [Fact]
+        public async Task SearchByName_ReturnsEmptyList_WhenNoProductMatches()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.SearchByName("XYZ")).ReturnsAsync(new List<Product>());
+
+            // Act
+            var result = await _service.SearchByName("XYZ");
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        // =====================
+        // GetByIdAdmin
+        // =====================
+
+        [Fact]
+        public async Task GetByIdAdmin_ReturnsProduct_WhenExists()
+        {
+            // Arrange
+            var product = new Product { ProductId = 1, Name = "Laptop", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+            _repoMock.Setup(r => r.GetByIdAdmin(1)).ReturnsAsync(product);
+
+            // Act
+            var result = await _service.GetByIdAdmin(1);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.Name.Should().Be("Laptop");
+        }
+
+        [Fact]
+        public async Task GetByIdAdmin_ReturnsNull_WhenNotExists()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.GetByIdAdmin(99)).ReturnsAsync((Product?)null);
+
+            // Act
+            var result = await _service.GetByIdAdmin(99);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        // =====================
+        // Create
+        // =====================
+
+        [Fact]
+        public async Task Create_ReturnsProductResponseDto_WhenProductIsCreated()
+        {
+            // Arrange
+            var dto = new CreateProductDto { Name = "Teclado", Description = "Mecánico", Price = 350000, Stock = 20, ImageUrl = "url", IsActive = true, CategoryId = 1 };
+            var created = new Product { ProductId = 3, Name = "Teclado", Description = "Mecánico", Price = 350000, Stock = 20, ImageUrl = "url", IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+            _repoMock.Setup(r => r.Create(It.IsAny<Product>())).ReturnsAsync(created);
+
+            // Act
+            var result = await _service.Create(dto);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Name.Should().Be("Teclado");
+            result.Price.Should().Be(350000);
+        }
+
+        [Fact]
+        public async Task Create_CallsRepository_WithCorrectFields()
+        {
+            // Arrange
+            var dto = new CreateProductDto { Name = "Monitor", Description = "4K", Price = 1500000, Stock = 5, ImageUrl = "urlMonitor", IsActive = true, CategoryId = 2 };
+            var created = new Product { ProductId = 4, Name = "Monitor", Description = "4K", Price = 1500000, Stock = 5, ImageUrl = "urlMonitor", IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 2, Category = new Category { Name = "Electrónica" } };
+            _repoMock.Setup(r => r.Create(It.IsAny<Product>())).ReturnsAsync(created);
+
+            // Act
+            await _service.Create(dto);
+
+            // Assert
+            _repoMock.Verify(r => r.Create(It.Is<Product>(p =>
+                p.Name == "Monitor" &&
+                p.Price == 1500000 &&
+                p.CategoryId == 2
+            )), Times.Once);
+        }
+
+        // =====================
+        // Update
+        // =====================
+
+        [Fact]
+        public async Task Update_ReturnsUpdatedProduct_WhenProductExists()
+        {
+            // Arrange
+            var existing = new Product { ProductId = 1, Name = "Laptop", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+            var updated = new Product { ProductId = 1, Name = "Laptop Pro", Price = 3000000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+            var dto = new UpdateProductDto { Name = "Laptop Pro", Price = 3000000 };
+
+            _repoMock.Setup(r => r.GetByIdAdmin(1)).ReturnsAsync(existing);
+            _repoMock.Setup(r => r.Update(It.IsAny<Product>())).ReturnsAsync(updated);
+
+            // Act
+            var result = await _service.Update(1, dto);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.Name.Should().Be("Laptop Pro");
+            result.Price.Should().Be(3000000);
+        }
+
+        [Fact]
+        public async Task Update_ReturnsNull_WhenProductNotExists()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.GetByIdAdmin(99)).ReturnsAsync((Product?)null);
+
+            // Act
+            var result = await _service.Update(99, new UpdateProductDto());
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task Update_OnlyUpdatesProvidedFields()
+        {
+            // Arrange
+            var existing = new Product { ProductId = 1, Name = "Laptop", Description = "Original", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+            var dto = new UpdateProductDto { Name = "Laptop Actualizado" };
+            var updated = new Product { ProductId = 1, Name = "Laptop Actualizado", Description = "Original", Price = 2500000, Stock = 10, IsActive = true, CreatedAt = DateTime.UtcNow, CategoryId = 1, Category = new Category { Name = "Electrónica" } };
+
+            _repoMock.Setup(r => r.GetByIdAdmin(1)).ReturnsAsync(existing);
+            _repoMock.Setup(r => r.Update(It.IsAny<Product>())).ReturnsAsync(updated);
+
+            // Act
+            var result = await _service.Update(1, dto);
+
+            // Assert
+            result!.Name.Should().Be("Laptop Actualizado");
+            result.Description.Should().Be("Original");
+            result.Price.Should().Be(2500000);
+        }
+
+        // =====================
+        // Delete
+        // =====================
+
+        [Fact]
+        public async Task Delete_ReturnsTrue_WhenProductIsDeleted()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.Delete(1)).ReturnsAsync(true);
+
+            // Act
+            var result = await _service.Delete(1);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsFalse_WhenProductNotExists()
+        {
+            // Arrange
+            _repoMock.Setup(r => r.Delete(99)).ReturnsAsync(false);
+
+            // Act
+            var result = await _service.Delete(99);
+
+            // Assert
+            result.Should().BeFalse();
+        }
 
     }
    

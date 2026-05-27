@@ -9,13 +9,11 @@ namespace APIEccomerce.Services
     public class AccessService : IAccessService
     {
         private readonly IUserRepository _repo;
-        private readonly Utilities _utils;
-
-        public AccessService(IUserRepository repo, Utilities utils)
+        private readonly IUtilities _utils;
+        public AccessService(IUserRepository repo, IUtilities utils)
         {
             _repo = repo;
             _utils = utils;
-
         }
 
         // register new user
