@@ -13,6 +13,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
  
 import { ProductInterface } from '../../interfaces/product.interface';
 import { ProductsApiService } from '../../services/products-api.service';
+import { CartService } from '../../../cart/services/cart.service';
+import { TokenService } from '../../../../core/services/token.service';
+import { AddedProduct, cartPanel } from '../../../cart/pages/cart-panel/cart.panel';
+
 @Component({
   selector: 'app-product-detail',
   imports: [CommonModule,
@@ -22,17 +26,23 @@ import { ProductsApiService } from '../../services/products-api.service';
     MatChipsModule,
     MatDividerModule,
     MatTooltipModule,
-    MatSnackBarModule,],
+    MatSnackBarModule,
+    cartPanel,],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
 export class ProductDetail implements OnInit {
 [x: string]: any;
+  private readonly cartService = inject(CartService);
+  private readonly tokenService = inject(TokenService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly productsApiService = inject(ProductsApiService);
   private readonly snackBar = inject(MatSnackBar);
-  
+
+  addingToCart = signal(false);
+  addedProduct = signal<AddedProduct | null>(null);
+  showPanel = signal(false);
   isZoomed = signal(false);
   zoomOrigin = signal('center center');
  
@@ -129,6 +139,36 @@ decreaseQty() {
 }
 
 addToCart() {
-  // pendiente
+ if (!this.tokenService.isLoggedIn()) {
+    this.router.navigate(['/auth/login']);
+    return;
+  }
+ 
+  const p = this.product();
+  if (!p) return;
+ 
+  this.addingToCart.set(true);
+  this.cartService.addOrUpdateItem({
+    productId: p.idProducto,
+    quantity: this.quantity(),
+  }).subscribe({
+    next: () => {
+      this.addedProduct.set({
+        nombre: p.nombre,
+        imagenUrl: p.imagenUrl,
+        quantity: this.quantity(),
+        precio: p.precio * this.quantity(),
+      });
+      this.showPanel.set(true);
+      this.addingToCart.set(false);
+    },
+    error: () => {
+      this.snackBar.open('Error al agregar al carrito', 'OK', {
+        duration: 3000,
+        panelClass: 'snack-error',
+      });
+      this.addingToCart.set(false);
+    },
+  });
 }
 }

@@ -29,14 +29,14 @@
     <!-- Buscador -->
     <!-- Buscador -->
 <div class="search-wrapper">
-  <div class="search-box" [class.search-focused]="searchFocused">
+  <div class="search-box" [class.search-focused]="searchFocused()">
     <mat-icon class="search-icon-left">search</mat-icon>
     <input
       class="search-input"
       [value]="searchTerm()"
       (input)="onSearchInput($any($event.target).value)"
-      (focus)="searchFocused = true"
-      (blur)="searchFocused = false"
+      (focus)="searchFocused.set(true)"
+      (blur)="searchFocused.set(false)"
       placeholder="Buscar producto…"
       autocomplete="off"
     />

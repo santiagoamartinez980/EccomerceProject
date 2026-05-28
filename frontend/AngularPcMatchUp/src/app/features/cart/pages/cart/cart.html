@@ -1,0 +1,201 @@
+<!-- features/cart/pages/cart/cart.component.html -->
+
+<div class="cart-wrapper">
+
+  <!-- Header -->
+  <div class="cart-header">
+    <button mat-button class="back-btn" (click)="goToProducts()">
+      <mat-icon>arrow_back</mat-icon>
+      Seguir comprando
+    </button>
+    <div class="header-title">
+      <mat-icon>shopping_bag</mat-icon>
+      <h1>Mi carrito</h1>
+      @if (!isEmpty()) {
+        <span class="item-count">
+          {{ itemCount() }} {{ itemCount() === 1 ? 'producto' : 'productos' }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- ══ CARGANDO ══ -->
+  @if (loading()) {
+    <div class="state-box">
+      <mat-spinner diameter="40" />
+      <p>Cargando carrito…</p>
+    </div>
+  }
+
+  <!-- ══ ERROR ══ -->
+  @if (error() && !loading()) {
+    <div class="state-box">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button class="btn-primary" (click)="loadCart()">
+        <mat-icon>refresh</mat-icon> Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- ══ VACÍO ══ -->
+  @if (!loading() && !error() && isEmpty()) {
+    <div class="state-box empty-state">
+      <div class="empty-icon">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+      <h2 class="empty-title">Tu carrito está vacío</h2>
+      <p class="empty-sub">Agrega productos desde el catálogo</p>
+      <button class="btn-primary" (click)="goToProducts()">
+        <mat-icon>storefront</mat-icon>
+        Ver catálogo
+      </button>
+    </div>
+  }
+
+  <!-- ══ CONTENIDO ══ -->
+  @if (!loading() && !error() && !isEmpty()) {
+    <div class="cart-layout">
+
+      <!-- ── Items ── -->
+      <div class="items-col">
+
+        <!-- Encabezado con "seleccionar todos" -->
+        <div class="items-header">
+          <mat-checkbox
+            [checked]="allSelected()"
+            [indeterminate]="selectedItems().length > 0 && !allSelected()"
+            (change)="toggleSelectAll()"
+            color="primary">
+            <span class="select-all-label">Seleccionar todo</span>
+          </mat-checkbox>
+
+          <button class="btn-ghost-danger" (click)="clearCart()" [disabled]="clearingCart()">
+            @if (clearingCart()) { <mat-spinner diameter="16" /> }
+            @else { <mat-icon>delete_sweep</mat-icon> }
+            Vaciar carrito
+          </button>
+        </div>
+
+        <!-- Lista de items -->
+        <div class="items-list">
+          @for (item of cart()!.items; track trackByItem($index, item)) {
+
+            <div class="cart-item" [class.updating]="isUpdating(item.productId)"
+                 [class.unselected]="!isSelected(item.productId)">
+
+              <!-- Checkbox -->
+              <mat-checkbox
+                [checked]="isSelected(item.productId)"
+                (change)="toggleSelect(item.productId)"
+                color="primary"
+                class="item-checkbox">
+              </mat-checkbox>
+
+              <!-- Imagen -->
+              <div class="item-thumb">
+                @if (item.imagenUrl) {
+                  <img [src]="item.imagenUrl" [alt]="item.productName" loading="lazy" />
+                } @else {
+                  <mat-icon>inventory_2</mat-icon>
+                }
+              </div>
+
+              <!-- Info -->
+              <div class="item-info">
+                <span class="item-name">{{ item.productName }}</span>
+                <span class="item-unit-price">{{ formatPrice(item.unitPrice) }} c/u</span>
+                @if (item.stock <= 5 && item.stock > 0) {
+                  <span class="stock-warning">
+                    <mat-icon>warning</mat-icon>
+                    Solo quedan {{ item.stock }}
+                  </span>
+                }
+              </div>
+
+              <!-- Controles -->
+              <div class="item-controls">
+
+                <!-- Qty -->
+                <div class="qty-selector">
+                  <button class="qty-btn"
+                          (click)="updateQuantity(item, item.quantity - 1)"
+                          [disabled]="item.quantity <= 1 || isUpdating(item.productId)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+
+                  @if (isUpdating(item.productId)) {
+                    <mat-spinner diameter="18" class="qty-spinner" />
+                  } @else {
+                    <span class="qty-value">{{ item.quantity }}</span>
+                  }
+
+                  <button class="qty-btn"
+                          (click)="updateQuantity(item, item.quantity + 1)"
+                          [disabled]="item.quantity >= item.stock || isUpdating(item.productId)"
+                          [matTooltip]="item.quantity >= item.stock ? 'Stock máximo alcanzado' : ''">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+
+                <!-- Subtotal -->
+                <span class="item-subtotal">{{ formatPrice(item.subtotal) }}</span>
+
+                <!-- Eliminar -->
+                <button class="btn-remove" (click)="removeItem(item)"
+                        [disabled]="isUpdating(item.productId)" matTooltip="Eliminar">
+                  <mat-icon>close</mat-icon>
+                </button>
+
+              </div>
+            </div>
+
+            <mat-divider />
+          }
+        </div>
+      </div>
+
+      <!-- ── Resumen ── -->
+      <div class="summary-col">
+        <div class="summary-card">
+          <h3 class="summary-title">Resumen del pedido</h3>
+
+          @if (selectedItems().length === 0) {
+            <p class="no-selection">Selecciona productos para ver el resumen</p>
+          } @else {
+            <div class="summary-rows">
+              @for (item of selectedItems(); track item.cartItemId) {
+                <div class="summary-row">
+                  <span class="summary-item-name">{{ item.productName }} x{{ item.quantity }}</span>
+                  <span>{{ formatPrice(item.subtotal) }}</span>
+                </div>
+              }
+            </div>
+
+            <mat-divider class="summary-divider" />
+
+            <div class="summary-total">
+              <span>Total seleccionado</span>
+              <span class="total-value">{{ formatPrice(selectedTotal()) }}</span>
+            </div>
+          }
+
+          <button class="btn-primary btn-checkout"
+                  [disabled]="selectedItems().length === 0">
+            <mat-icon>payment</mat-icon>
+            Proceder al pago
+            @if (selectedItems().length > 0) {
+              ({{ selectedItems().length }})
+            }
+          </button>
+
+          <button class="btn-ghost btn-continue" (click)="goToProducts()">
+            Seguir comprando
+          </button>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</div>
