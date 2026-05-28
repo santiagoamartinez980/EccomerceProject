@@ -25,6 +25,8 @@ namespace APIEccomerce.Models
 
         [Required]
         public Role Role { get; set; } = Role.User;
+
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
     }
 }
 

@@ -1,5 +1,6 @@
 using APIEccomerce.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace APIEccomerce.Data
 {
@@ -12,6 +13,7 @@ namespace APIEccomerce.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +62,20 @@ namespace APIEccomerce.Data
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(d => d.User)
+                .WithMany(u => u.Addresses)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Address>()
+                .Property(d => d.Latitude)
+                .HasPrecision(9, 6);
+
+            modelBuilder.Entity<Address>()
+                .Property(d => d.Longitude)
+                .HasPrecision(9, 6);
         }
     }
 }

@@ -21,16 +21,21 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
 
 
 // Servicios
+//externos
 builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
+builder.Services.AddHttpClient<IGoogleGeocodingService, GoogleGeocodingService>();
+//eccomerce
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccessService, AccessService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUtilities, Utilities>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>

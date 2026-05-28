@@ -40,21 +40,28 @@ namespace APIEccomerce.Controllers
         }
 
         [HttpPost("items")]
-        public async Task<IActionResult> AddOrUpdateItem(
-            [FromBody] CartItemRequest request)
+        public async Task<IActionResult> AddOrUpdateItem([FromBody] CartItemRequest request)
         {
-            var cart = await _cartService
-                .AddOrUpdateItemAsync(
-                    GetUserId(),
-                    request.ProductId,
-                    request.Quantity);
-
-            return Ok(new Response<CartDto>
+            try
             {
-                IsSuccess = true,
-                Message = "Carrito actualizado correctamente",
-                Value = cart
-            });
+                var cart = await _cartService.AddOrUpdateItemAsync(
+                    GetUserId(), request.ProductId, request.Quantity);
+
+                return Ok(new Response<CartDto>
+                {
+                    IsSuccess = true,
+                    Message = "Carrito actualizado correctamente",
+                    Value = cart
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new Response<object>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                });
+            }
         }
 
         [HttpDelete("items/{productId:int}")]

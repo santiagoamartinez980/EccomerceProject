@@ -137,12 +137,14 @@ namespace APIEccomerce.Services
         {
             return new CartItemDto
             {
-                CartItemId = item.CartItemId,
+                CartItemId = item.CartItemId,  
                 ProductId = item.ProductId,
                 ProductName = item.Product?.Name ?? string.Empty,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
-                Subtotal = item.Subtotal
+                Subtotal = item.Subtotal,
+                ImagenUrl = item.Product?.ImageUrl,   // ? agrega
+                Stock = item.Product?.Stock ?? 0
             };
         }
     }
