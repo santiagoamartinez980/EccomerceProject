@@ -21,5 +21,11 @@ namespace APIEccomerce.Models.DTOs
 
         [JsonPropertyName("subtotal")]
         public decimal Subtotal { get; set; }
+
+        [JsonPropertyName("imagenUrl")]
+        public string? ImagenUrl { get; set; }
+
+        [JsonPropertyName("stock")]
+        public int Stock { get; set; }
     }
 }

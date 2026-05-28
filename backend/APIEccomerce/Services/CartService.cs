@@ -142,7 +142,9 @@ namespace APIEccomerce.Services
                 ProductName = item.Product?.Name ?? string.Empty,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
-                Subtotal = item.Subtotal
+                Subtotal = item.Subtotal,
+                ImagenUrl = item.Product?.ImageUrl,   // ? agrega
+                Stock = item.Product?.Stock ?? 0
             };
         }
     }

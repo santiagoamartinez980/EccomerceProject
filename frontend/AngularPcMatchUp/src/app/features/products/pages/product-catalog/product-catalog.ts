@@ -40,7 +40,7 @@ export class ProductCatalog implements OnInit ,OnDestroy{
   private readonly productsQueryService = inject(ProductsQueryService);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
-  searchFocused = false;
+  searchFocused = signal(false);
   private readonly searchSubject = new Subject<string>();
  
   products = signal<ProductInterface[]>([]);

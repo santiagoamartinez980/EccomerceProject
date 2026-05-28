@@ -155,7 +155,7 @@
               </button>
             </div>
 
-            <button class="btn-add-cart" (click)="addToCart()">
+            <button class="btn-add-cart" (click)="addToCart()" [disabled]="addingToCart()">
               <mat-icon>shopping_bag</mat-icon>
               Agregar al carrito
             </button>
@@ -166,5 +166,9 @@
       </div>
     </div>
   }
-
+  <cart-panel
+    [product]="addedProduct()"
+    [visible]="showPanel()"
+    (closed)="showPanel.set(false)"
+  />
 </div>
