@@ -1,0 +1,121 @@
+<div class="address-wrapper">
+
+  <!-- Header -->
+  <div class="address-header">
+    <button mat-button class="back-btn" [routerLink]="['/']">
+      <mat-icon>arrow_back</mat-icon>
+      Atrás
+    </button>
+    <div class="header-title">
+      <mat-icon>location_on</mat-icon>
+      <h1>Mis direcciones</h1>
+    </div>
+    <button mat-raised-button color="primary" class="btn-new" (click)="createNew()">
+      <mat-icon>add</mat-icon>
+      Nueva dirección
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="state-box">
+      <mat-spinner diameter="40" />
+      <p>Cargando direcciones…</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error() && !loading()) {
+    <div class="state-box error">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-raised-button (click)="loadAddresses()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Empty -->
+  @if (!loading() && !error() && addresses().length === 0) {
+    <div class="state-box empty">
+      <mat-icon class="empty-icon">location_off</mat-icon>
+      <h2>Sin direcciones registradas</h2>
+      <p>Agrega una dirección de entrega</p>
+      <button mat-raised-button color="primary" (click)="createNew()">
+        <mat-icon>add_location</mat-icon>
+        Agregar dirección
+      </button>
+    </div>
+  }
+
+  <!-- List -->
+  @if (!loading() && !error() && addresses().length > 0) {
+    <div class="address-list">
+      @for (addr of addresses(); track trackByAddress($index, addr)) {
+        <mat-card class="address-card" [class.default]="addr.isDefault">
+          
+          <!-- Badge default -->
+          @if (addr.isDefault) {
+            <div class="badge-default">
+              <mat-icon>check_circle</mat-icon>
+              Predeterminada
+            </div>
+          }
+
+          <!-- Info -->
+          <div class="card-content">
+            <h3 class="address-line">{{ addr.formattedAddress || addr.addressLine }}</h3>
+            <div class="address-details">
+              <span class="detail-item">
+                <mat-icon>location_city</mat-icon>
+                {{ addr.city }}, {{ addr.department }}
+              </span>
+              <span class="detail-item">
+                <mat-icon>mail</mat-icon>
+                {{ addr.postalCode }}
+              </span>
+              <span class="detail-item">
+                <mat-icon>phone</mat-icon>
+                {{ addr.phone }}
+              </span>
+              @if (addr.notes) {
+                <span class="detail-item notes">
+                  <mat-icon>note</mat-icon>
+                  {{ addr.notes }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="card-actions">
+            @if (!addr.isDefault) {
+              <button mat-icon-button (click)="setDefault(addr)" matTooltip="Marcar como predeterminada">
+                <mat-icon>star_outline</mat-icon>
+              </button>
+            }
+            <button mat-icon-button (click)="editAddress(addr.addressId)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button 
+              mat-icon-button 
+              (click)="deleteAddress(addr.addressId)" 
+              [disabled]="isDeleting(addr.addressId)"
+              matTooltip="Eliminar"
+              color="warn">
+              @if (isDeleting(addr.addressId)) {
+                <mat-spinner diameter="20" />
+              } @else {
+                <mat-icon>delete</mat-icon>
+              }
+            </button>
+          </div>
+
+        </mat-card>
+        <mat-divider />
+      }
+    </div>
+  }
+
+</div>

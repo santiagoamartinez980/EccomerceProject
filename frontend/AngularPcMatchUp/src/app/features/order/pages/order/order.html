@@ -1,0 +1,135 @@
+<!-- my-orders.html -->
+<div class="orders-wrapper">
+
+  <header class="orders-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">receipt_long</mat-icon>
+      <div>
+        <h1>Mis pedidos</h1>
+        <p *ngIf="!loading()">{{ orders().length }} pedido{{ orders().length !== 1 ? 's' : '' }} en total</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="goToProducts()">
+      <mat-icon>storefront</mat-icon> Seguir comprando
+    </button>
+  </header>
+
+  <!-- ── Loading ── -->
+  <div *ngIf="loading()" class="loading-state">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Cargando tus pedidos…</p>
+  </div>
+
+  <!-- ── Sin pedidos ── -->
+  <div *ngIf="!loading() && orders().length === 0" class="empty-state">
+    <mat-icon class="empty-icon">shopping_bag</mat-icon>
+    <h2>Aún no tienes pedidos</h2>
+    <p>Cuando realices una compra, podrás ver el seguimiento aquí.</p>
+    <button mat-raised-button color="primary" (click)="goToProducts()">
+      <mat-icon>explore</mat-icon> Explorar productos
+    </button>
+  </div>
+
+  <!-- ── Lista de pedidos ── -->
+  <div *ngIf="!loading() && orders().length > 0" class="orders-list">
+
+    <mat-accordion multi>
+      <mat-expansion-panel
+        *ngFor="let order of orders(); trackBy: trackByOrder"
+        class="order-panel"
+        [class.panel-cancelled]="order.status === 'Cancelled'"
+        [class.panel-delivered]="order.status === 'Delivered'">
+
+        <!-- Header del panel -->
+        <mat-expansion-panel-header>
+          <mat-panel-title class="panel-title">
+            <div class="order-id">
+              <mat-icon>receipt</mat-icon>
+              <span>Pedido #{{ order.orderId }}</span>
+            </div>
+          </mat-panel-title>
+          <mat-panel-description class="panel-desc">
+            <div class="status-chip" [class]="'status-' + order.status.toLowerCase()">
+              <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+              <span>{{ getStatusLabel(order.status) }}</span>
+            </div>
+            <span class="order-total">{{ formatPrice(order.total) }}</span>
+            <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- Contenido expandido -->
+        <div class="order-body">
+
+          <!-- Dirección -->
+          <div class="section-block">
+            <h3 class="block-title">
+              <mat-icon>location_on</mat-icon> Dirección de entrega
+            </h3>
+            <div class="address-block">
+              <p class="addr-line">{{ order.address.addressLine }}</p>
+              <p class="addr-city">{{ order.address.city }}, {{ order.address.department }}</p>
+              <p *ngIf="order.address.phone" class="addr-phone">
+                <mat-icon>phone</mat-icon> {{ order.address.phone }}
+              </p>
+              <p *ngIf="order.address.notes" class="addr-notes">
+                <mat-icon>notes</mat-icon> {{ order.address.notes }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Productos -->
+          <div class="section-block">
+            <h3 class="block-title">
+              <mat-icon>inventory_2</mat-icon> Productos
+            </h3>
+            <div class="items-table">
+              <div class="items-header">
+                <span>Producto</span>
+                <span>Cant.</span>
+                <span>Precio unit.</span>
+                <span>Subtotal</span>
+              </div>
+              <div *ngFor="let item of order.details" class="item-row">
+                <div class="item-product">
+                  <img
+                    [src]="item.imageUrl || 'assets/placeholder.png'"
+                    [alt]="item.productName"
+                    class="item-img" />
+                  <span>{{ item.productName }}</span>
+                </div>
+                <span class="item-qty">{{ item.quantity }}</span>
+                <span>{{ formatPrice(item.unitPrice) }}</span>
+                <span class="item-sub">{{ formatPrice(item.subtotal) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total y acciones -->
+          <div class="order-footer">
+            <div class="total-block">
+              <span>Total del pedido</span>
+              <strong class="total-value">{{ formatPrice(order.total) }}</strong>
+            </div>
+
+            <div class="actions-block">
+              <button
+                *ngIf="canCancel(order.status)"
+                mat-stroked-button
+                color="warn"
+                class="btn-cancel"
+                [disabled]="cancelling() === order.orderId"
+                (click)="cancelOrder(order.orderId)">
+                <mat-spinner *ngIf="cancelling() === order.orderId" diameter="16"></mat-spinner>
+                <mat-icon *ngIf="cancelling() !== order.orderId">cancel</mat-icon>
+                {{ cancelling() === order.orderId ? 'Cancelando…' : 'Cancelar pedido' }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+  </div>
+</div>

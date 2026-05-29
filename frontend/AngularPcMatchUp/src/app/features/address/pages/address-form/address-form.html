@@ -1,0 +1,105 @@
+<div class="form-wrapper">
+  <div class="form-header">
+    <button mat-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Atrás
+    </button>
+    <h1>{{ editingId() ? 'Editar dirección' : 'Nueva dirección' }}</h1>
+  </div>
+
+  @if (loadingDetail()) {
+    <div class="state-box">
+      <mat-spinner diameter="40" />
+    </div>
+  }
+
+  @if (!loadingDetail()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-content">
+
+      <div class="form-section">
+        <h2>
+          <mat-icon>description</mat-icon>
+          Información de la dirección
+        </h2>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="addressLine" placeholder="Calle 123 #45-67">
+          @if (form.get('addressLine')?.hasError('required') && form.get('addressLine')?.touched) {
+            <mat-error>Dirección requerida</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ciudad</mat-label>
+          <input matInput formControlName="city" placeholder="Bogotá">
+          @if (form.get('city')?.hasError('required') && form.get('city')?.touched) {
+            <mat-error>Ciudad requerida</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Departamento</mat-label>
+          <mat-select formControlName="department">
+            <mat-option>-- Seleccionar --</mat-option>
+            @for (dept of departments; track trackByDepartment($index, dept)) {
+              <mat-option [value]="dept">{{ dept }}</mat-option>
+            }
+          </mat-select>
+          @if (form.get('department')?.hasError('required') && form.get('department')?.touched) {
+            <mat-error>Departamento requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Código postal</mat-label>
+          <input matInput formControlName="postalCode" placeholder="110111">
+          @if (form.get('postalCode')?.hasError('required') && form.get('postalCode')?.touched) {
+            <mat-error>Código postal requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phone" placeholder="3001234567" type="tel">
+          @if (form.get('phone')?.hasError('required') && form.get('phone')?.touched) {
+            <mat-error>Teléfono requerido</mat-error>
+          }
+          @if (form.get('phone')?.hasError('pattern') && form.get('phone')?.touched) {
+            <mat-error>Teléfono debe tener 10 dígitos</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notas adicionales (opcional)</mat-label>
+          <textarea matInput formControlName="notes" rows="2" placeholder="Ej: Casa con portón azul"></textarea>
+        </mat-form-field>
+
+      </div>
+
+      <div class="form-section">
+        <mat-checkbox formControlName="isDefault" color="primary">
+          <span>Marcar como dirección predeterminada</span>
+        </mat-checkbox>
+      </div>
+
+      <div class="form-actions">
+        <button mat-stroked-button type="button" (click)="goBack()">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+          @if (saving()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <ng-container>
+              <mat-icon>{{ editingId() ? 'edit' : 'add_location' }}</mat-icon>
+              {{ editingId() ? 'Actualizar dirección' : 'Crear dirección' }}
+            </ng-container>
+          }
+        </button>
+      </div>
+
+    </form>
+  }
+</div>

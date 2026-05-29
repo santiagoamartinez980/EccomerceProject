@@ -1,0 +1,188 @@
+<!-- checkout.html -->
+<div class="checkout-wrapper">
+
+  <!-- ── Loading inicial ── -->
+  <div *ngIf="isLoading" class="loading-screen">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Preparando tu pedido…</p>
+  </div>
+
+  <!-- ── Contenido principal ── -->
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ══ PASO 1: Resumen ══ -->
+    <ng-container *ngIf="step() === 'summary'">
+
+      <header class="checkout-header">
+        <button mat-icon-button (click)="goBackToCart()" aria-label="Volver">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Resumen del pedido</h1>
+      </header>
+
+      <div class="checkout-layout">
+
+        <!-- Columna izquierda: direcciones + items -->
+        <div class="checkout-left">
+
+          <!-- Dirección de entrega -->
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>location_on</mat-icon>
+              <mat-card-title>Dirección de entrega</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+
+              <ng-container *ngIf="addresses().length; else noAddresses">
+                <mat-radio-group
+                  [(ngModel)]="selectedAddressId"
+                  class="address-list"
+                  aria-label="Seleccionar dirección">
+                  <mat-radio-button
+                    *ngFor="let addr of addresses(); trackBy: trackByAddress"
+                    [value]="addr.addressId"
+                    class="address-option">
+                    <div class="address-info">
+                      <span class="address-line">{{ addr.addressLine }}</span>
+                      <span class="address-city">{{ addr.city }}, {{ addr.department }}</span>
+                      <span *ngIf="addr.phone" class="address-phone">
+                        <mat-icon>phone</mat-icon> {{ addr.phone }}
+                      </span>
+                      <span *ngIf="addr.isDefault" class="badge-default">Predeterminada</span>
+                    </div>
+                  </mat-radio-button>
+                </mat-radio-group>
+              </ng-container>
+
+              <ng-template #noAddresses>
+                <div class="empty-state small">
+                  <mat-icon>home_work</mat-icon>
+                  <p>No tienes direcciones registradas</p>
+                </div>
+              </ng-template>
+
+              <button mat-stroked-button color="primary" (click)="goToAddresses()" class="btn-add-addr">
+                <mat-icon>add</mat-icon> Agregar dirección
+              </button>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Items del carrito -->
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>shopping_bag</mat-icon>
+              <mat-card-title>Productos ({{ cart()?.items?.length ?? 0 }})</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="items-list">
+                <div *ngFor="let item of cart()?.items" class="cart-item">
+                  <img
+                    [src]="item.imagenUrl || 'assets/placeholder.png'"
+                    [alt]="item.productName"
+                    class="item-img"
+                    loading="lazy" />
+                  <div class="item-info">
+                    <span class="item-name">{{ item.productName }}</span>
+                    <span class="item-qty">x{{ item.quantity }}</span>
+                  </div>
+                  <span class="item-subtotal">{{ formatPrice(item.subtotal) }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
+
+        <!-- Columna derecha: resumen de pago -->
+        <div class="checkout-right">
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>Total del pedido</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span>{{ formatPrice(cart()?.total ?? 0) }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Envío</span>
+                <span class="text-green">Gratis</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="summary-row total-row">
+                <strong>Total</strong>
+                <strong>{{ formatPrice(cart()?.total ?? 0) }}</strong>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                class="btn-pay"
+                [disabled]="creatingOrder() || loadingPayment() || !selectedAddressId()"
+                (click)="createOrder()">
+                <mat-spinner *ngIf="creatingOrder() || loadingPayment()" diameter="20"></mat-spinner>
+                <mat-icon *ngIf="!creatingOrder() && !loadingPayment()">lock</mat-icon>
+                {{ (creatingOrder() || loadingPayment()) ? 'Procesando…' : 'Ir a pagar' }}
+              </button>
+            </mat-card-actions>
+
+            <div class="wompi-badge">
+              <mat-icon>security</mat-icon>
+              <span>Pago seguro con Wompi</span>
+            </div>
+          </mat-card>
+        </div>
+
+      </div><!-- /checkout-layout -->
+    </ng-container>
+    <!-- ══ FIN PASO 1 ══ -->
+
+
+    <!-- ══ PASO 2: Widget de Wompi ══ -->
+    <ng-container *ngIf="step() === 'payment'">
+
+      <header class="checkout-header">
+        <h1>Completa tu pago</h1>
+      </header>
+
+      <div class="payment-wrapper">
+
+        <mat-card class="payment-info-card">
+          <mat-card-content>
+            <div class="payment-meta">
+              <div class="meta-item">
+                <span class="meta-label">Referencia</span>
+                <span class="meta-value mono">{{ paymentIntent()?.reference }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Total a pagar</span>
+                <span class="meta-value total-amount">
+                  {{ formatPrice((paymentIntent()?.amountInCents ?? 0) / 100) }}
+                </span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Moneda</span>
+                <span class="meta-value">{{ paymentIntent()?.currency }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Aquí monta el widget de Wompi -->
+        <div id="wompi-widget-container" class="wompi-container"></div>
+
+        <p class="payment-note">
+          <mat-icon>info</mat-icon>
+          Serás redirigido a Wompi para completar el pago de forma segura.
+          Al finalizar volverás automáticamente a tu resumen de pedidos.
+        </p>
+
+      </div>
+
+    </ng-container>
+    <!-- ══ FIN PASO 2 ══ -->
+
+  </ng-container>
+</div>

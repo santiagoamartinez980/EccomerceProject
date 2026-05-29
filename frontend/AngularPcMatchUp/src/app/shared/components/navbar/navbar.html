@@ -28,15 +28,44 @@
       </a>
 
       <!-- Sesión -->
-      @if (isLoggedIn()) {
-        <a routerLink="/perfil" class="action-btn profile-btn" matTooltip="Mi perfil">
-          <mat-icon>person</mat-icon>
-        </a>
-      } @else {
-        <a routerLink="/auth/login" class="btn-primary">
-          Iniciar sesión
-        </a>
-      }
+          @if (isLoggedIn()) {
+
+      <button
+        class="action-btn profile-btn"
+        mat-icon-button
+        [matMenuTriggerFor]="profileMenu"
+        matTooltip="Mi perfil">
+
+        <mat-icon>person</mat-icon>
+
+      </button>
+
+      <mat-menu #profileMenu="matMenu">
+
+        <button mat-menu-item routerLink="/direcciones">
+          <mat-icon>location_on</mat-icon>
+          <span>Mis direcciones</span>
+        </button>
+
+        <button mat-menu-item routerLink="/ordenes">
+          <mat-icon>receipt_long</mat-icon>
+          <span>Mis órdenes</span>
+        </button>
+
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar sesión</span>
+        </button>
+
+      </mat-menu>
+
+    } @else {
+
+      <a routerLink="/auth/login" class="btn-primary">
+        Iniciar sesión
+      </a>
+
+    }
 
     </div>
 

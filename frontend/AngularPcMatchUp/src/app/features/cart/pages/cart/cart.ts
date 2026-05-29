@@ -181,4 +181,9 @@ export class Cart implements OnInit {
   trackByItem(_: number, item: CartItemDto): number {
     return item.cartItemId;
   }
+
+  goToCheckout(): void {
+  this.router.navigate(['/checkout']);
+  }
+
 }

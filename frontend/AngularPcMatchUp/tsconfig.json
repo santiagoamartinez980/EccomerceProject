@@ -4,6 +4,7 @@
   "compilerOptions": {
     "strict": true,
     "noImplicitOverride": true,
+    "types": ["node"],
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

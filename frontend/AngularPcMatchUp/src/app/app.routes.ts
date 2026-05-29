@@ -31,6 +31,18 @@ export const routes: Routes = [
   },
 
   {
+  path: 'direcciones',
+  loadChildren: () => import('./features/address/address.routes').then(m => m.ADDRESS_ROUTES)
+  },
+
+  {
+  path: 'checkout',
+  canActivate: [authGuard],
+  loadComponent: () => import('./features/checkout/checkout/checkout').then(m => m.Checkout),
+  title: 'Checkout'
+  },
+
+  {
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then(

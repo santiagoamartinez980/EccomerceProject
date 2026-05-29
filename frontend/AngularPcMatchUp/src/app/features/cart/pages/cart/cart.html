@@ -181,13 +181,15 @@
           }
 
           <button class="btn-primary btn-checkout"
-                  [disabled]="selectedItems().length === 0">
+            [disabled]="selectedItems().length === 0"
+            (click)="goToCheckout()">
             <mat-icon>payment</mat-icon>
             Proceder al pago
             @if (selectedItems().length > 0) {
               ({{ selectedItems().length }})
             }
           </button>
+
 
           <button class="btn-ghost btn-continue" (click)="goToProducts()">
             Seguir comprando
