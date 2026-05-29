@@ -1,0 +1,56 @@
+name: Search Stress Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  workflow_dispatch:
+
+jobs:
+  stress-test:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Instalar .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restaurar dependencias
+      run: dotnet restore
+
+    - name: Compilar solución
+      run: dotnet build --no-restore
+
+    - name: Levantar API
+      shell: powershell
+      run: |
+        Start-Process dotnet -ArgumentList "run --project backend/APIEccomerce/APIEccomerce.csproj"
+        Start-Sleep -Seconds 20
+
+    - name: Crear carpeta Resultados
+      shell: powershell
+      run: |
+        New-Item -ItemType Directory -Force -Path "backend/APIEccomerce.Tests/Resultados"
+
+    - name: Ejecutar Stress Test Search
+      shell: powershell
+      run: |
+        cd "backend/APIEccomerce.Tests"
+
+        $fecha = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+
+        dotnet test --filter "SearchProductos_ExtremeStressTest_500Requests" *>&1 `
+        | Tee-Object -FilePath ".\Resultados\StressTest_Search_$fecha.txt"
+
+    - name: Subir resultados TXT
+      uses: actions/upload-artifact@v4
+      with:
+        name: Resultados-SearchStressTest
+        path: backend/APIEccomerce.Tests/Resultados/
