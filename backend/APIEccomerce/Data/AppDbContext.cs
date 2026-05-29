@@ -14,6 +14,9 @@ namespace APIEccomerce.Data
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,6 +79,40 @@ namespace APIEccomerce.Data
             modelBuilder.Entity<Address>()
                 .Property(d => d.Longitude)
                 .HasPrecision(9, 6);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Address)
+                .WithMany()
+                .HasForeignKey(o => o.AddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Total)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.Details)
+                .HasForeignKey(od => od.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Product)
+                .WithMany()
+                .HasForeignKey(od => od.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Order)
+                .WithMany()
+                .HasForeignKey(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

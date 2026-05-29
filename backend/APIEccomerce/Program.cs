@@ -1,4 +1,4 @@
-﻿using APIEccomerce.Custom;
+using APIEccomerce.Custom;
 using APIEccomerce.Data;
 using APIEccomerce.Interfaces;
 using APIEccomerce.Repositories;
@@ -15,27 +15,28 @@ var builder = WebApplication.CreateBuilder(args);
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine($">>> Cadena de conexión: {connStr}");
 
-//Dtos Mapping
 // Repositorios
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
-
-
-// Servicios
-//externos
+// Servicios externos
 builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
 builder.Services.AddHttpClient<IGoogleGeocodingService, GoogleGeocodingService>();
-//eccomerce
+
+// Servicios eccomerce
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAccessService, AccessService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUtilities, Utilities>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -76,7 +77,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 20-04-20206 Migraciones con reintento manual
+// Migraciones con reintento manual
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -97,7 +98,7 @@ using (var scope = app.Services.CreateScope())
             if (retries == 0)
                 logger.LogError(ex, "❌ No se pudo conectar a la BD");
             else
-                Thread.Sleep(5000); // espera 5 segundos antes de reintentar
+                Thread.Sleep(5000);
         }
     }
 }
