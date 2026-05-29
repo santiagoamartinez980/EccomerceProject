@@ -1,13 +1,27 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-//20-04-2026 se agrega el interceptor para agregar el token en las solicitudes HTTP, excepto en la solicitud de login
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  console.log('Interceptando la solicitud HTTP:', req);
-  if(req.url.indexOf("Acceso")>0)return next(req);
+  console.log('Interceptando la solicitud HTTP:', req.url);
+  
+  // No agregar token a endpoints de autenticación
+  if (req.url.includes('Access') || req.url.includes('login') || req.url.includes('register')) {
+    return next(req);
+  }
+
   const token = localStorage.getItem('token');
-  const clonRequest = req.clone({
+  
+  // Solo clonar si hay token
+  if (!token) {
+    console.warn('⚠️ No hay token en localStorage');
+    return next(req);
+  }
+
+  console.log('✓ Agregando token a la solicitud');
+  const clonedRequest = req.clone({
     setHeaders: {
       Authorization: `Bearer ${token}`
     }
   });
-  return next(clonRequest);
+  
+  return next(clonedRequest);
 };

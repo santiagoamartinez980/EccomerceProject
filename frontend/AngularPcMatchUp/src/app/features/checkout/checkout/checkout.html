@@ -130,7 +130,7 @@
 
             <div class="wompi-badge">
               <mat-icon>security</mat-icon>
-              <span>Pago seguro con Wompi</span>
+              <span>Pago seguro</span>
             </div>
           </mat-card>
         </div>
@@ -140,7 +140,7 @@
     <!-- ══ FIN PASO 1 ══ -->
 
 
-    <!-- ══ PASO 2: Widget de Wompi ══ -->
+    <!-- ══ PASO 2: Confirmar Pago ══ -->
     <ng-container *ngIf="step() === 'payment'">
 
       <header class="checkout-header">
@@ -170,19 +170,43 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Aquí monta el widget de Wompi -->
-        <div id="wompi-widget-container" class="wompi-container"></div>
+        <mat-card class="payment-button-card">
+          <mat-card-content>
+            <p class="payment-instruction">Haz clic para completar el pago</p>
+            <button
+              mat-raised-button
+              color="accent"
+              class="btn-confirm-payment"
+              (click)="confirmPaymentSimulation(createdOrder()?.orderId!)">
+              <mat-icon>check_circle</mat-icon>
+              Confirmar Pago
+            </button>
+          </mat-card-content>
+        </mat-card>
 
         <p class="payment-note">
           <mat-icon>info</mat-icon>
-          Serás redirigido a Wompi para completar el pago de forma segura.
-          Al finalizar volverás automáticamente a tu resumen de pedidos.
+          Serás redirigido al resumen de tu pedido después de confirmar el pago.
         </p>
 
       </div>
 
     </ng-container>
     <!-- ══ FIN PASO 2 ══ -->
+
+    <!-- ══ PASO 3: Procesando ══ -->
+    <ng-container *ngIf="step() === 'confirming'">
+
+      <div class="payment-redirect-screen">
+        <mat-spinner diameter="48"></mat-spinner>
+        <h2>Procesando pago…</h2>
+        <p>{{ paymentIntent()?.reference }}</p>
+        <p class="amount">{{ formatPrice((paymentIntent()?.amountInCents ?? 0) / 100) }}</p>
+        <p class="small-text">Por favor espera mientras confirmamos tu pago.</p>
+      </div>
+
+    </ng-container>
+    <!-- ══ FIN PASO 3 ══ -->
 
   </ng-container>
 </div>

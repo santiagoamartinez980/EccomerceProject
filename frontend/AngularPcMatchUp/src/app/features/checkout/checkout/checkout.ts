@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../../cart/services/cart.service';
 import { AddressApiService } from '../../address/services/address-api.service';
 
-
 import { CartDto } from '../../cart/interfaces/cart.dto';
 import { AddressDto } from '../../address/interfaces/address.dto';
 import { PaymentService } from '../services/payment.services';
@@ -59,10 +58,7 @@ export class Checkout implements OnInit, OnDestroy {
   creatingOrder       = signal(false);
   loadingPayment      = signal(false);
 
-  /** Paso: 'summary' → 'payment' */
-  step = signal<'summary' | 'payment'>('summary');
-
-  private wompiScriptLoaded = false;
+  step = signal<'summary' | 'payment' | 'confirming'>('summary');
 
   ngOnInit(): void {
     this.loadCart();
@@ -70,12 +66,9 @@ export class Checkout implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar el widget de Wompi si existe
     const container = document.getElementById('wompi-widget-container');
     if (container) container.innerHTML = '';
   }
-
-  // ─── Carga de datos ────────────────────────────────────────────────────────
 
   loadCart(): void {
     this.cartService.getCart().subscribe({
@@ -102,8 +95,6 @@ export class Checkout implements OnInit, OnDestroy {
     });
   }
 
-  // ─── Crear orden ───────────────────────────────────────────────────────────
-
   createOrder(): void {
     if (!this.selectedAddressId()) {
       this.snack.open('Selecciona una dirección de entrega', 'OK', { duration: 3000 });
@@ -115,74 +106,84 @@ export class Checkout implements OnInit, OnDestroy {
     }
 
     this.creatingOrder.set(true);
+    console.log('📦 Creando orden...');
 
-        const payload: any = {
-          addressId: this.selectedAddressId()!,
-          items: this.cart()?.items.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity
-          })) ?? []
-        };
+    const payload: any = {
+      addressId: this.selectedAddressId()!,
+      items: this.cart()?.items.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+      })) ?? []
+    };
 
-        this.orderService.create(payload).subscribe({
+    this.orderService.create(payload).subscribe({
       next: (order) => {
+        console.log('✓ Orden creada:', order.orderId);
         this.createdOrder.set(order);
-        this.creatingOrder.set(false);
         this.loadPaymentIntent(order.orderId);
       },
-      error: () => {
+      error: (err) => {
+        console.error('✗ Error al crear orden:', err);
         this.snack.open('Error al crear el pedido', 'OK', { duration: 3000 });
         this.creatingOrder.set(false);
       },
     });
   }
 
-  // ─── Payment Intent + Widget Wompi ────────────────────────────────────────
-
   private loadPaymentIntent(orderId: number): void {
     this.loadingPayment.set(true);
+    console.log('💳 Creando intención de pago para orden:', orderId);
 
     this.paymentService.createIntent(orderId).subscribe({
       next: (intent) => {
-        console.log('WOMPI INTENT', intent);
+        console.log('✓ WOMPI INTENT RECIBIDO:', intent);
         this.paymentIntent.set(intent);
         this.loadingPayment.set(false);
         this.step.set('payment');
-        
-        // Renderizar widget en el siguiente ciclo (DOM listo)
-        setTimeout(() => this.renderWompiWidget(intent), 100);
       },
-      error: () => {
-        this.snack.open('Error al generar el pago', 'OK', { duration: 3000 });
+      error: (error) => {
+        console.error('✗ ERROR AL CREAR INTENCIÓN:', error);
+        this.snack.open(
+          `Error al generar pago: ${error.statusText}`,
+          'OK',
+          { duration: 5000 }
+        );
         this.loadingPayment.set(false);
+        this.creatingOrder.set(false);
       },
     });
   }
 
-  private renderWompiWidget(intent: PaymentIntentDto): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  confirmPaymentSimulation(orderId: number): void {
+    this.step.set('confirming');
+    console.log('✓ Simulando pago exitoso para orden:', orderId);
 
-    const container = document.getElementById('wompi-widget-container');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    const script = document.createElement('script');
-
-    script.src = 'https://checkout.wompi.co/widget.js';
-
-    script.setAttribute('data-render', 'button');
-    script.setAttribute('data-public-key', intent.publicKey);
-    script.setAttribute('data-currency', intent.currency);
-    script.setAttribute('data-amount-in-cents', String(intent.amountInCents));
-    script.setAttribute('data-reference', intent.reference);
-    script.setAttribute('data-signature-integrity', intent.signature);
-    script.setAttribute('data-redirect-url', intent.redirectUrl);
-
-    container.appendChild(script);
+    this.paymentService.confirmPayment(orderId).subscribe({
+      next: () => {
+        console.log('✓ Pago confirmado, vaciando carrito...');
+        
+        this.cartService.clearCart().subscribe({
+          next: () => {
+            console.log('✓ Carrito vaciado');
+            setTimeout(() => {
+              this.router.navigate([`/pedido/${orderId}/confirmacion`]);
+            }, 1500);
+          },
+          error: () => {
+            console.warn('⚠️ Carrito no se pudo vaciar, pero continuando...');
+            setTimeout(() => {
+              this.router.navigate([`/pedido/${orderId}/confirmacion`]);
+            }, 1500);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('✗ Error confirmando pago:', err);
+        this.snack.open('Error al confirmar pago', 'OK', { duration: 3000 });
+        this.step.set('payment');
+      },
+    });
   }
-
-  // ─── Helpers ───────────────────────────────────────────────────────────────
 
   goToAddresses(): void {
     this.router.navigate(['/direcciones/nueva'], { queryParams: { returnUrl: '/checkout' } });

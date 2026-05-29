@@ -21,4 +21,10 @@ export class PaymentService {
       .post<ApiResponse<PaymentIntentDto>>(`${this.base}/intent/${orderId}`, {})
       .pipe(map(r => r.value));
   }
+
+  confirmPayment(orderId: number): Observable<any> {
+    return this.http
+      .post<ApiResponse<any>>(`${this.base}/confirm/${orderId}`, {})
+      .pipe(map(r => r.value));
+  }
 }

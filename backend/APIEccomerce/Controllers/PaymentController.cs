@@ -13,10 +13,12 @@ namespace APIEccomerce.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _service;
+        private readonly IOrderService _orderService;
 
-        public PaymentController(IPaymentService service)
+        public PaymentController(IPaymentService service, IOrderService orderService)
         {
             _service = service;
+            _orderService = orderService;
         }
 
         private int GetUserId() =>
@@ -33,6 +35,34 @@ namespace APIEccomerce.Controllers
                 Message   = "Intención de pago creada",
                 Value     = intent
             });
+        }
+
+        /// <summary>
+        /// Endpoint de simulación de pago exitoso (para desarrollo)
+        /// </summary>
+        [HttpPost("confirm/{orderId:int}")]
+        [Authorize]
+        public async Task<IActionResult> ConfirmPayment(int orderId)
+        {
+            try
+            {
+                await _orderService.ConfirmPayment(orderId);
+                return Ok(new Response<object>
+                {
+                    IsSuccess = true,
+                    Message = "Pago confirmado y orden completada",
+                    Value = new { orderId }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Response<object>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                    Value = null
+                });
+            }
         }
 
         [HttpPost("webhook")]

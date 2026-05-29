@@ -1,0 +1,370 @@
+/* confirmation.css */
+
+.confirmation-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+/* ── Loading ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 300px;
+  color: #666;
+}
+
+/* ── Error ── */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 300px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  color: #f44336;
+}
+
+.error-state h2 {
+  color: #1a1a2e;
+  margin: 0;
+}
+
+/* ── Success Header ── */
+.success-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: #e8f5e9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-icon mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #4caf50;
+}
+
+.success-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.success-header p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ── Layout ── */
+.confirmation-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .confirmation-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Confirmation Card ── */
+.confirmation-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+}
+
+.confirmation-card mat-card-header {
+  margin-bottom: 24px;
+}
+
+.confirmation-card mat-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ── Info Grid ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+@media (max-width: 600px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #999;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.info-value.mono {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.info-value.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  width: fit-content;
+}
+
+.info-value.status mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.info-value.status.confirmed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* ── Sections ── */
+.section {
+  margin-bottom: 28px;
+}
+
+.section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 16px 0;
+}
+
+.section h3 mat-icon {
+  color: #2c66d8;
+}
+
+/* ── Address ── */
+.address-block {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.address-block p {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+}
+
+.address-block p:last-child {
+  margin-bottom: 0;
+}
+
+.addr-line {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.addr-city {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.addr-phone {
+  color: #888;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Items List ── */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item-row {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  align-items: center;
+}
+
+.item-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.item-qty {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.item-prices {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.item-unit {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.item-subtotal {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+/* ── Total ── */
+.total-section {
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+  margin-top: 20px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+}
+
+.total-row strong {
+  color: #2c66d8;
+}
+
+/* ── Actions ── */
+.confirmation-card mat-card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.confirmation-card mat-card-actions button {
+  flex: 1;
+}
+
+/* ── Tips Sidebar ── */
+.tips-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tips-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+  position: sticky;
+  top: 80px;
+}
+
+.tips-card mat-card-header {
+  margin-bottom: 16px;
+}
+
+.tips-card mat-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tip {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tip:last-child {
+  border-bottom: none;
+}
+
+.tip mat-icon {
+  color: #2c66d8;
+  flex-shrink: 0;
+}
+
+.tip strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  margin-bottom: 2px;
+}
+
+.tip p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}

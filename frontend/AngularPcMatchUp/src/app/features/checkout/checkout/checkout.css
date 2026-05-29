@@ -6,7 +6,6 @@
   padding: 24px 16px 48px;
 }
 
-/* ── Header ── */
 .checkout-header {
   display: flex;
   align-items: center;
@@ -21,7 +20,6 @@
   color: #1a1a2e;
 }
 
-/* ── Loading ── */
 .loading-screen {
   display: flex;
   flex-direction: column;
@@ -32,7 +30,42 @@
   color: #666;
 }
 
-/* ── Layout 2 columnas ── */
+.payment-redirect-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 400px;
+  color: #666;
+  text-align: center;
+}
+
+.payment-redirect-screen h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #1a1a2e;
+}
+
+.payment-redirect-screen p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.payment-redirect-screen .amount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c66d8;
+  margin: 8px 0;
+}
+
+.payment-redirect-screen .small-text {
+  font-size: 0.82rem;
+  color: #999;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
 .checkout-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -46,14 +79,12 @@
   }
 }
 
-/* ── Cards ── */
 .section-card {
   margin-bottom: 20px;
   border-radius: 12px !important;
   box-shadow: 0 2px 12px rgba(0,0,0,0.07) !important;
 }
 
-/* ── Direcciones ── */
 .address-list {
   display: flex;
   flex-direction: column;
@@ -108,7 +139,6 @@
   margin-top: 8px;
 }
 
-/* ── Items ── */
 .items-list {
   display: flex;
   flex-direction: column;
@@ -141,7 +171,6 @@
 .item-qty  { font-size: 0.82rem; color: #888; }
 .item-subtotal { font-weight: 700; white-space: nowrap; }
 
-/* ── Summary card ── */
 .summary-card {
   border-radius: 12px !important;
   box-shadow: 0 2px 12px rgba(0,0,0,0.07) !important;
@@ -189,7 +218,6 @@
 }
 .wompi-badge mat-icon { font-size: 16px; height: 16px; width: 16px; color: #4caf50; }
 
-/* ── Paso pago ── */
 .payment-wrapper {
   max-width: 520px;
   margin: 0 auto;
@@ -200,6 +228,34 @@
 
 .payment-info-card {
   border-radius: 12px !important;
+}
+
+.payment-button-card {
+  border-radius: 12px !important;
+  border: 2px solid #2c66d8;
+  background: #f0f4ff;
+}
+
+.payment-button-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-instruction {
+  margin: 0;
+  font-size: 1rem;
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+.btn-confirm-payment {
+  width: 100%;
+  height: 56px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  gap: 12px;
 }
 
 .payment-meta {
@@ -220,18 +276,6 @@
 .meta-value.mono { font-family: monospace; font-size: 0.92rem; }
 .meta-value.total-amount { font-size: 1.25rem; color: #1a1a2e; }
 
-.wompi-container {
-  min-height: 80px;
-  display: flex;
-  justify-content: center;
-}
-
-/* Wompi renderiza el botón dentro del form */
-.wompi-container form {
-  display: flex;
-  justify-content: center;
-}
-
 .payment-note {
   display: flex;
   align-items: flex-start;
@@ -242,7 +286,6 @@
 }
 .payment-note mat-icon { font-size: 18px; height: 18px; width: 18px; flex-shrink: 0; margin-top: 1px; }
 
-/* ── Empty state ── */
 .empty-state.small {
   display: flex;
   flex-direction: column;

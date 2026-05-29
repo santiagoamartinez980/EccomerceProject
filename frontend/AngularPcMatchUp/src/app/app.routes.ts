@@ -25,21 +25,35 @@ export const routes: Routes = [
   },
 
   {
-  path: 'carrito',
-  loadChildren: () =>
-    import('./features/cart/cart.routes').then(m => m.CART_ROUTES),
+    path: 'carrito',
+    loadChildren: () =>
+      import('./features/cart/cart.routes').then(m => m.CART_ROUTES),
   },
 
   {
-  path: 'direcciones',
-  loadChildren: () => import('./features/address/address.routes').then(m => m.ADDRESS_ROUTES)
+    path: 'direcciones',
+    loadChildren: () => import('./features/address/address.routes').then(m => m.ADDRESS_ROUTES)
   },
 
   {
-  path: 'checkout',
-  canActivate: [authGuard],
-  loadComponent: () => import('./features/checkout/checkout/checkout').then(m => m.Checkout),
-  title: 'Checkout'
+    path: 'checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/checkout/checkout/checkout').then(m => m.Checkout),
+    title: 'Checkout'
+  },
+
+  {
+    path: 'pedidos',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/order/pages/order/order').then(m => m.MyOrders),
+    title: 'Mis Pedidos'
+  },
+
+  {
+    path: 'pedido/:id/confirmacion',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/checkout/confirmation/confirmation').then(m => m.Confirmation),
+    title: 'Confirmación de Pago'
   },
 
   {
@@ -55,5 +69,3 @@ export const routes: Routes = [
     redirectTo: 'productos',
   },
 ];
-
-

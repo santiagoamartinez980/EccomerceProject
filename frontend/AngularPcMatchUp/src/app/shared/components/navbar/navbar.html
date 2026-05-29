@@ -14,7 +14,7 @@
       <a routerLink="/" routerLinkActive="link-active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
         Inicio
       </a>
-      <a routerLink="/catalogo" routerLinkActive="link-active" class="nav-link">
+      <a routerLink="/productos" routerLinkActive="link-active" class="nav-link">
         Catálogo
       </a>
     </div>
@@ -47,9 +47,9 @@
           <span>Mis direcciones</span>
         </button>
 
-        <button mat-menu-item routerLink="/ordenes">
+        <button mat-menu-item routerLink="/pedidos">
           <mat-icon>receipt_long</mat-icon>
-          <span>Mis órdenes</span>
+          <span>Mis pedidos</span>
         </button>
 
         <button mat-menu-item (click)="logout()">

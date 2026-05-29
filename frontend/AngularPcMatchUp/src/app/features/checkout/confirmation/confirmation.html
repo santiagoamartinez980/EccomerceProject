@@ -1,0 +1,153 @@
+<!-- confirmation.html -->
+<div class="confirmation-wrapper">
+
+  <!-- ── Loading ── -->
+  <div *ngIf="loading()" class="loading-state">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Cargando confirmación…</p>
+  </div>
+
+  <!-- ── Error ── -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h2>{{ error() }}</h2>
+    <button mat-raised-button color="primary" (click)="goToOrders()">
+      <mat-icon>receipt</mat-icon> Ir a mis pedidos
+    </button>
+  </div>
+
+  <!-- ── Confirmación Exitosa ── -->
+  <ng-container *ngIf="order() && !loading() && !error()">
+
+    <div class="success-header">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <h1>¡Pago confirmado!</h1>
+      <p>Tu pedido ha sido registrado exitosamente</p>
+    </div>
+
+    <div class="confirmation-layout">
+
+      <!-- Tarjeta principal -->
+      <mat-card class="confirmation-card">
+        <mat-card-header>
+          <mat-card-title>Detalles del pedido</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <!-- Información de pedido -->
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Número de pedido</span>
+              <span class="info-value mono">#{{ order()!.orderId }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha</span>
+              <span class="info-value">{{ formatDate(order()!.createdAt) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado</span>
+              <span class="info-value status confirmed">
+                <mat-icon>check_circle</mat-icon>
+                Confirmado
+              </span>
+            </div>
+          </div>
+
+          <!-- Dirección -->
+          <div class="section" *ngIf="order()?.address">
+            <h3>
+              <mat-icon>location_on</mat-icon> Dirección de entrega
+            </h3>
+            <div class="address-block">
+              <p class="addr-line">{{ order()!.address.addressLine }}</p>
+              <p class="addr-city">{{ order()!.address.city }}, {{ order()!.address.department }}</p>
+              <p *ngIf="order()!.address.phone" class="addr-phone">
+                {{ order()!.address.phone }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Productos -->
+          <div class="section" *ngIf="order()?.details">
+            <h3>
+              <mat-icon>inventory_2</mat-icon> Productos ordenados
+            </h3>
+            <div class="items-list">
+              <div *ngFor="let item of order()!.details" class="item-row">
+                <img
+                  [src]="item.imageUrl || 'assets/placeholder.png'"
+                  [alt]="item.productName"
+                  class="item-img" />
+                <div class="item-info">
+                  <span class="item-name">{{ item.productName }}</span>
+                  <span class="item-qty">Cantidad: {{ item.quantity }}</span>
+                </div>
+                <div class="item-prices">
+                  <span class="item-unit">{{ formatPrice(item.unitPrice) }}</span>
+                  <span class="item-subtotal">{{ formatPrice(item.subtotal) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="total-section">
+            <div class="total-row">
+              <span>Total</span>
+              <strong>{{ formatPrice(order()!.total) }}</strong>
+            </div>
+          </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="goToOrders()">
+            <mat-icon>receipt</mat-icon> Ver mis pedidos
+          </button>
+          <button mat-stroked-button (click)="goToProducts()">
+            <mat-icon>storefront</mat-icon> Seguir comprando
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+
+      <!-- Sidebar de tips -->
+      <div class="tips-sidebar">
+        <mat-card class="tips-card">
+          <mat-card-header>
+            <mat-card-title>Próximos pasos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="tip">
+              <mat-icon>notifications</mat-icon>
+              <div>
+                <strong>Notificación</strong>
+                <p>Recibirás un email con los detalles de tu pedido</p>
+              </div>
+            </div>
+            <div class="tip">
+              <mat-icon>local_shipping</mat-icon>
+              <div>
+                <strong>Envío</strong>
+                <p>Tracking disponible en tus pedidos en 24 horas</p>
+              </div>
+            </div>
+            <div class="tip">
+              <mat-icon>support_agent</mat-icon>
+              <div>
+                <strong>Soporte</strong>
+                <p>¿Dudas? Contacta con nuestro equipo</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>
