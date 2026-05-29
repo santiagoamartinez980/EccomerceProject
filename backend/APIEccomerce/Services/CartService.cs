@@ -27,9 +27,9 @@ namespace APIEccomerce.Services
         }
 
         public async Task<CartDto> AddOrUpdateItemAsync(
-            int userId,
-            int productId,
-            int quantity)
+    int userId,
+    int productId,
+    int quantity)
         {
             var cart = await _cartRepo.GetActiveCartByUserIdAsync(userId)
                    ?? await _cartRepo.CreateCartAsync(userId);
@@ -39,6 +39,18 @@ namespace APIEccomerce.Services
             if (product == null)
             {
                 throw new KeyNotFoundException("Producto no encontrado.");
+            }
+
+            if (!product.IsActive)
+            {
+                throw new InvalidOperationException(
+                    "El producto no está disponible.");
+            }
+
+            if (quantity > product.Stock)
+            {
+                throw new InvalidOperationException(
+                    "Stock insuficiente.");
             }
 
             if (quantity <= 0)
@@ -74,7 +86,7 @@ namespace APIEccomerce.Services
             await _cartRepo.SaveChangesAsync();
 
             var updatedCart = await _cartRepo.GetActiveCartByUserIdAsync(userId);
-            
+
             return MapCart(updatedCart!);
         }
 

@@ -71,12 +71,12 @@ namespace APIEccomerce.Services
 
         public async Task ProcessWebhook(WompiWebhookDto webhook)
         {
+            if (webhook.Event != "transaction.updated")
+                return;
+
             if (!ValidateWebhookSignature(webhook))
                 throw new UnauthorizedAccessException(
                     "Firma del webhook inválida.");
-
-            if (webhook.Event != "transaction.updated")
-                return;
 
             var transaction = webhook.Data.Transaction;
             var status      = MapStatus(transaction.Status);
