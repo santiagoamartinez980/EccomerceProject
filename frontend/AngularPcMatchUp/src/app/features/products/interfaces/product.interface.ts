@@ -1,4 +1,3 @@
-import { CategoryInterface } from "../../categories/interfaces/category.interface";
 
 export interface ProductInterface {
   idProducto: number;

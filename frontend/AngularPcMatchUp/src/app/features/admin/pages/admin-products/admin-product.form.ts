@@ -47,7 +47,7 @@ import { CategoryInterface } from '../../../categories/interfaces/category.inter
 
         <mat-form-field appearance="outline">
           <mat-label>Descripción</mat-label>
-          <textarea matInput formControlName="descripcion" rows="3" maxlength="100"></textarea>
+          <textarea matInput formControlName="descripcion" rows="3" maxlength="1000"></textarea>
         </mat-form-field>
 
         <div class="form-row">
