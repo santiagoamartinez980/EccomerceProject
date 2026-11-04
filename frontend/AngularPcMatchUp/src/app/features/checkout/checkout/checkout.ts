@@ -19,6 +19,8 @@ import { PaymentService } from '../services/payment.services';
 import { OrderService } from '../../order/services/order.services';
 import { OrderDto } from '../../order/interfaces/order.dto';
 import { PaymentIntentDto } from './interfaces/payment-interface.dto';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 
 @Component({
@@ -34,6 +36,7 @@ import { PaymentIntentDto } from './interfaces/payment-interface.dto';
     MatSnackBarModule,
     MatRadioModule,
     FormsModule,
+    TranslatePipe,
   ],
   templateUrl: './checkout.html',
   styleUrls: ['./checkout.css'],
@@ -46,6 +49,7 @@ export class Checkout implements OnInit, OnDestroy {
   private readonly router         = inject(Router);
   private readonly snack          = inject(MatSnackBar);
   private readonly platformId     = inject(PLATFORM_ID);
+  private readonly i18n           = inject(I18nService);
 
   cart                = signal<CartDto | null>(null);
   addresses           = signal<AddressDto[]>([]);
@@ -74,7 +78,7 @@ export class Checkout implements OnInit, OnDestroy {
     this.cartService.getCart().subscribe({
       next: (data) => { this.cart.set(data); this.loadingCart.set(false); },
       error: () => {
-        this.snack.open('Error al cargar carrito', 'OK', { duration: 3000 });
+        this.snack.open(this.i18n.t('checkout.errorCart'), this.i18n.t('common.ok'), { duration: 3000 });
         this.loadingCart.set(false);
       },
     });
@@ -89,7 +93,7 @@ export class Checkout implements OnInit, OnDestroy {
         this.loadingAddresses.set(false);
       },
       error: () => {
-        this.snack.open('Error al cargar direcciones', 'OK', { duration: 3000 });
+        this.snack.open(this.i18n.t('checkout.errorAddresses'), this.i18n.t('common.ok'), { duration: 3000 });
         this.loadingAddresses.set(false);
       },
     });
@@ -97,11 +101,11 @@ export class Checkout implements OnInit, OnDestroy {
 
   createOrder(): void {
     if (!this.selectedAddressId()) {
-      this.snack.open('Selecciona una dirección de entrega', 'OK', { duration: 3000 });
+      this.snack.open(this.i18n.t('checkout.selectAddress'), this.i18n.t('common.ok'), { duration: 3000 });
       return;
     }
     if (!this.cart()?.items.length) {
-      this.snack.open('El carrito está vacío', 'OK', { duration: 3000 });
+      this.snack.open(this.i18n.t('checkout.emptyCart'), this.i18n.t('common.ok'), { duration: 3000 });
       return;
     }
 
@@ -124,7 +128,7 @@ export class Checkout implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('✗ Error al crear orden:', err);
-        this.snack.open('Error al crear el pedido', 'OK', { duration: 3000 });
+        this.snack.open(this.i18n.t('checkout.errorOrder'), this.i18n.t('common.ok'), { duration: 3000 });
         this.creatingOrder.set(false);
       },
     });
@@ -144,8 +148,8 @@ export class Checkout implements OnInit, OnDestroy {
       error: (error) => {
         console.error('✗ ERROR AL CREAR INTENCIÓN:', error);
         this.snack.open(
-          `Error al generar pago: ${error.statusText}`,
-          'OK',
+          this.i18n.t('checkout.errorPayment', { status: error.statusText }),
+          this.i18n.t('common.ok'),
           { duration: 5000 }
         );
         this.loadingPayment.set(false);
@@ -179,7 +183,7 @@ export class Checkout implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('✗ Error confirmando pago:', err);
-        this.snack.open('Error al confirmar pago', 'OK', { duration: 3000 });
+        this.snack.open(this.i18n.t('checkout.errorConfirm'), this.i18n.t('common.ok'), { duration: 3000 });
         this.step.set('payment');
       },
     });

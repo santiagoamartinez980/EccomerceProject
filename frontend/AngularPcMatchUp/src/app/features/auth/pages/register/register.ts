@@ -10,15 +10,18 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-register',
   imports: [MatCardModule, MatFormFieldModule, MatInputModule,MatButtonModule, 
-    MatIconModule, MatSnackBarModule,ReactiveFormsModule],
+    MatIconModule, MatSnackBarModule,ReactiveFormsModule, TranslatePipe],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
 export class Register {
   private snack = inject(MatSnackBar);
+  private i18n = inject(I18nService);
   public hidePassword = true;
   private authApiService=inject(AuthApiService);
   private router=inject(Router);
@@ -40,7 +43,7 @@ export class Register {
     };
     this.authApiService.register(objeto).subscribe({
       next:(data)=>{
-          this.snack.open('¡Registro exitoso! Bienvenido 🎉', 'OK', {
+          this.snack.open(this.i18n.t('register.success'), this.i18n.t('common.ok'), {
             duration: 3000,
             panelClass: 'snack-success'
           });
@@ -48,8 +51,8 @@ export class Register {
 
       },
       error:(err)=>{
-        const mensaje = err?.error?.message ?? 'Error al registrarse, intenta de nuevo';
-        this.snack.open(mensaje, 'Cerrar', {
+        const mensaje = err?.error?.message ?? this.i18n.t('register.error');
+        this.snack.open(mensaje, this.i18n.t('common.close'), {
         duration: 4000,
         panelClass: 'snack-error'
         });

@@ -12,6 +12,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 import { jwtDecode } from 'jwt-decode';
 
@@ -23,7 +25,7 @@ interface JwtPayload {
 @Component({
   selector: 'app-login',
   imports: [MatCardModule, MatFormFieldModule, MatInputModule,MatButtonModule, 
-    MatIconModule, ReactiveFormsModule],
+    MatIconModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -33,6 +35,7 @@ export class Login {
   private router=inject(Router);
   public formBuil =inject(FormBuilder);
   private tokenService=inject(TokenService);
+  private i18n=inject(I18nService);
 
   public formLogin :FormGroup=this.formBuil.group({   
     correo:['',Validators.required],
@@ -61,7 +64,7 @@ export class Login {
       },
       error:(err)=>{
         console.error(err);
-        alert("Error al iniciar sesión");
+        alert(this.i18n.t('login.error'));
         console.error(err);
       }
     });   

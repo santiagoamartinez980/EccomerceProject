@@ -16,6 +16,8 @@ import { ProductsApiService } from '../../services/products-api.service';
 import { CartService } from '../../../cart/services/cart.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { AddedProduct, cartPanel } from '../../../cart/pages/cart-panel/cart.panel';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-product-detail',
@@ -27,7 +29,8 @@ import { AddedProduct, cartPanel } from '../../../cart/pages/cart-panel/cart.pan
     MatDividerModule,
     MatTooltipModule,
     MatSnackBarModule,
-    cartPanel,],
+    cartPanel,
+    TranslatePipe],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -39,6 +42,7 @@ export class ProductDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly productsApiService = inject(ProductsApiService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly i18n = inject(I18nService);
 
   addingToCart = signal(false);
   addedProduct = signal<AddedProduct | null>(null);
@@ -69,7 +73,7 @@ export class ProductDetail implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se encontró el producto o ocurrió un error.');
+        this.error.set(this.i18n.t('detail.errorLoad'));
         this.loading.set(false);
       },
     });
@@ -92,7 +96,7 @@ export class ProductDetail implements OnInit {
   }
  
   formatDate(date: string): string {
-    return new Intl.DateTimeFormat('es-CO', {
+    return new Intl.DateTimeFormat(this.i18n.locale, {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -106,9 +110,9 @@ export class ProductDetail implements OnInit {
   }
  
   getStockText(stock: number): string {
-    if (stock === 0) return 'Agotado';
-    if (stock <= 5) return `Solo quedan ${stock} unidades`;
-    return `${stock} unidades disponibles`;
+    if (stock === 0) return this.i18n.t('stock.soldOut');
+    if (stock <= 5) return this.i18n.t('detail.stockLow', { n: stock });
+    return this.i18n.t('detail.stockOk', { n: stock });
   }
 
   onMouseMove(event: MouseEvent) {
@@ -163,7 +167,7 @@ addToCart() {
       this.addingToCart.set(false);
     },
     error: () => {
-      this.snackBar.open('Error al agregar al carrito', 'OK', {
+      this.snackBar.open(this.i18n.t('detail.errorAdd'), this.i18n.t('common.ok'), {
         duration: 3000,
         panelClass: 'snack-error',
       });

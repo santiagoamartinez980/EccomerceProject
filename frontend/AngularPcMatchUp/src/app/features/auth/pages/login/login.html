@@ -5,40 +5,40 @@
       <div class="logo-icon">
         <mat-icon>shopping_bag</mat-icon>
       </div>
-      <h2>Bienvenido de nuevo</h2>
-      <p>Inicia sesión en tu cuenta</p>
+      <h2>{{ 'login.welcome' | t }}</h2>
+      <p>{{ 'login.subtitle' | t }}</p>
     </div>
 
     <mat-card-content>
       <form [formGroup]="formLogin" (ngSubmit)="inisiarSesion()" class="login-form">
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Correo electrónico</mat-label>
-          <input matInput type="email" placeholder="ejemplo@correo.com" formControlName="correo"/>
+          <mat-label>{{ 'auth.email' | t }}</mat-label>
+          <input matInput type="email" [placeholder]="'auth.emailPlaceholder' | t" formControlName="correo"/>
           <mat-icon matPrefix>email</mat-icon>
           @if (formLogin.get('correo')?.hasError('required') && formLogin.get('correo')?.touched) {
-            <mat-error>El correo es requerido</mat-error>
+            <mat-error>{{ 'auth.emailRequired' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Contraseña</mat-label>
+          <mat-label>{{ 'auth.password' | t }}</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="clave"/>
           <mat-icon matPrefix>lock</mat-icon>
           <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (formLogin.get('clave')?.hasError('required') && formLogin.get('clave')?.touched) {
-            <mat-error>La contraseña es requerida</mat-error>
+            <mat-error>{{ 'auth.passwordRequired' | t }}</mat-error>
           }
         </mat-form-field>
 
         <button mat-raised-button type="submit" class="btn-login full-width" [disabled]="formLogin.invalid">
-          Iniciar sesión
+          {{ 'login.submit' | t }}
         </button>
 
         <button mat-stroked-button type="button" class="btn-register full-width" (click)="registrarse()">
-          Crear una cuenta
+          {{ 'login.createAccount' | t }}
         </button>
 
       </form>

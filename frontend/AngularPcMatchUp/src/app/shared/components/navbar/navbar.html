@@ -12,18 +12,28 @@
     <!-- Links -->
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="link-active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
-        Inicio
+        {{ 'nav.home' | t }}
       </a>
       <a routerLink="/productos" routerLinkActive="link-active" class="nav-link">
-        Catálogo
+        {{ 'nav.catalog' | t }}
       </a>
     </div>
 
     <!-- Acciones -->
     <div class="nav-actions">
 
+      <!-- Idioma -->
+      <button
+        type="button"
+        class="action-btn lang-btn"
+        [matTooltip]="'nav.language' | t"
+        [attr.aria-label]="'nav.language' | t"
+        (click)="i18n.toggle()">
+        {{ i18n.lang() === 'es' ? 'EN' : 'ES' }}
+      </button>
+
       <!-- Carrito -->
-      <a routerLink="/carrito" class="action-btn" matTooltip="Carrito">
+      <a routerLink="/carrito" class="action-btn" [matTooltip]="'nav.cart' | t">
         <mat-icon>shopping_bag</mat-icon>
       </a>
 
@@ -34,7 +44,7 @@
         class="action-btn profile-btn"
         mat-icon-button
         [matMenuTriggerFor]="profileMenu"
-        matTooltip="Mi perfil">
+        [matTooltip]="'nav.profile' | t">
 
         <mat-icon>person</mat-icon>
 
@@ -44,17 +54,17 @@
 
         <button mat-menu-item routerLink="/direcciones">
           <mat-icon>location_on</mat-icon>
-          <span>Mis direcciones</span>
+          <span>{{ 'nav.addresses' | t }}</span>
         </button>
 
         <button mat-menu-item routerLink="/pedidos">
           <mat-icon>receipt_long</mat-icon>
-          <span>Mis pedidos</span>
+          <span>{{ 'nav.orders' | t }}</span>
         </button>
 
         <button mat-menu-item (click)="logout()">
           <mat-icon>logout</mat-icon>
-          <span>Cerrar sesión</span>
+          <span>{{ 'nav.logout' | t }}</span>
         </button>
 
       </mat-menu>
@@ -62,7 +72,7 @@
     } @else {
 
       <a routerLink="/auth/login" class="btn-primary">
-        Iniciar sesión
+        {{ 'nav.login' | t }}
       </a>
 
     }

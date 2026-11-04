@@ -110,6 +110,14 @@
   height: 20px;
 }
 
+.lang-btn {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  padding: 0;
+}
+
 .btn-primary {
   height: 36px;
   padding: 0 16px;

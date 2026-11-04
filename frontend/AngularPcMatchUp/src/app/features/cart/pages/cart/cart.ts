@@ -15,6 +15,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CartService } from '../../services/cart.service';
 import { CartDto } from '../../interfaces/cart.dto';
 import { CartItemDto } from '../../interfaces/cart-item.dto';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-cart',
@@ -28,6 +30,7 @@ import { CartItemDto } from '../../interfaces/cart-item.dto';
     MatCheckboxModule,
     MatSnackBarModule,
     MatTooltipModule,
+    TranslatePipe,
   ],
   templateUrl: './cart.html',
   styleUrls: ['./cart.css'],
@@ -36,6 +39,7 @@ export class Cart implements OnInit {
   private readonly cartService = inject(CartService);
   private readonly router = inject(Router);
   private readonly snack = inject(MatSnackBar);
+  private readonly i18n = inject(I18nService);
 
   cart = signal<CartDto | null>(null);
   loading = signal(true);
@@ -77,7 +81,7 @@ export class Cart implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar el carrito.');
+        this.error.set(this.i18n.t('cart.errorLoad'));
         this.loading.set(false);
       },
     });
@@ -120,7 +124,7 @@ export class Cart implements OnInit {
         this.updatingItemId.set(null);
       },
       error: () => {
-        this.snack.open('Error al actualizar cantidad', 'OK', { duration: 3000, panelClass: 'snack-error' });
+        this.snack.open(this.i18n.t('cart.errorUpdate'), this.i18n.t('common.ok'), { duration: 3000, panelClass: 'snack-error' });
         this.updatingItemId.set(null);
       },
     });
@@ -137,27 +141,27 @@ export class Cart implements OnInit {
         this.selectedIds.set(current);
         this.cart.set(data);
         this.updatingItemId.set(null);
-        this.snack.open('Producto eliminado del carrito', 'OK', { duration: 2000 });
+        this.snack.open(this.i18n.t('cart.removed'), this.i18n.t('common.ok'), { duration: 2000 });
       },
       error: () => {
-        this.snack.open('Error al eliminar producto', 'OK', { duration: 3000, panelClass: 'snack-error' });
+        this.snack.open(this.i18n.t('cart.errorRemove'), this.i18n.t('common.ok'), { duration: 3000, panelClass: 'snack-error' });
         this.updatingItemId.set(null);
       },
     });
   }
 
   clearCart(): void {
-    if (!confirm('¿Vaciar todo el carrito?')) return;
+    if (!confirm(this.i18n.t('cart.confirmClear'))) return;
     this.clearingCart.set(true);
     this.cartService.clearCart().subscribe({
       next: () => {
         this.selectedIds.set(new Set());
         this.loadCart();
         this.clearingCart.set(false);
-        this.snack.open('Carrito vaciado', 'OK', { duration: 2000 });
+        this.snack.open(this.i18n.t('cart.cleared'), this.i18n.t('common.ok'), { duration: 2000 });
       },
       error: () => {
-        this.snack.open('Error al vaciar el carrito', 'OK', { duration: 3000, panelClass: 'snack-error' });
+        this.snack.open(this.i18n.t('cart.errorClear'), this.i18n.t('common.ok'), { duration: 3000, panelClass: 'snack-error' });
         this.clearingCart.set(false);
       },
     });

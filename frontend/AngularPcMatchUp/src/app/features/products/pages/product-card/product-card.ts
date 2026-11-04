@@ -1,5 +1,5 @@
 
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProductInterface } from '../../interfaces/product.interface';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-product-card',
   imports: [CommonModule,
@@ -14,11 +16,13 @@ import { ProductInterface } from '../../interfaces/product.interface';
     MatIconModule,
     MatRippleModule,
     MatButtonModule,
-    MatTooltipModule],
+    MatTooltipModule,
+    TranslatePipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })
 export class ProductCard {
+  private readonly i18n = inject(I18nService);
   product = input.required<ProductInterface>();
     cardClick = output<ProductInterface>();
   
@@ -35,9 +39,9 @@ export class ProductCard {
     }
   
     getStockLabel(stock: number): string {
-      if (stock === 0) return 'Agotado';
-      if (stock <= 5) return `Últimas ${stock}`;
-      return `${stock} disp.`;
+      if (stock === 0) return this.i18n.t('stock.soldOut');
+      if (stock <= 5) return this.i18n.t('stock.lastN', { n: stock });
+      return this.i18n.t('stock.left', { n: stock });
     }
   
     getStockLevel(stock: number): 'ok' | 'low' | 'out' {

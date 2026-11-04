@@ -19,9 +19,9 @@
  
     <!-- Stock badge sobre la imagen -->
     @if (product().stock === 0) {
-      <span class="stock-badge badge-out">Agotado</span>
+      <span class="stock-badge badge-out">{{ 'stock.soldOut' | t }}</span>
     } @else if (product().stock <= 5) {
-      <span class="stock-badge badge-low">Últimas unidades</span>
+      <span class="stock-badge badge-low">{{ 'stock.lastUnits' | t }}</span>
     }
   </div>
  
@@ -51,7 +51,7 @@
   <!-- Indicador visual "ver más" -->
   <div class="card-hover-overlay">
     <mat-icon>arrow_forward</mat-icon>
-    <span>Ver detalle</span>
+    <span>{{ 'card.viewDetail' | t }}</span>
   </div>
  
 </mat-card>

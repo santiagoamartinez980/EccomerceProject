@@ -6,14 +6,14 @@
   <div class="cart-header">
     <button mat-button class="back-btn" (click)="goToProducts()">
       <mat-icon>arrow_back</mat-icon>
-      Seguir comprando
+      {{ 'cart.keepShopping' | t }}
     </button>
     <div class="header-title">
       <mat-icon>shopping_bag</mat-icon>
-      <h1>Mi carrito</h1>
+      <h1>{{ 'cart.title' | t }}</h1>
       @if (!isEmpty()) {
         <span class="item-count">
-          {{ itemCount() }} {{ itemCount() === 1 ? 'producto' : 'productos' }}
+          {{ itemCount() }} {{ (itemCount() === 1 ? 'common.product.one' : 'common.product.other') | t }}
         </span>
       }
     </div>
@@ -23,7 +23,7 @@
   @if (loading()) {
     <div class="state-box">
       <mat-spinner diameter="40" />
-      <p>Cargando carrito…</p>
+      <p>{{ 'cart.loading' | t }}</p>
     </div>
   }
 
@@ -33,7 +33,7 @@
       <mat-icon class="state-icon">error_outline</mat-icon>
       <p>{{ error() }}</p>
       <button class="btn-primary" (click)="loadCart()">
-        <mat-icon>refresh</mat-icon> Reintentar
+        <mat-icon>refresh</mat-icon> {{ 'catalog.retry' | t }}
       </button>
     </div>
   }
@@ -44,11 +44,11 @@
       <div class="empty-icon">
         <mat-icon>shopping_bag</mat-icon>
       </div>
-      <h2 class="empty-title">Tu carrito está vacío</h2>
-      <p class="empty-sub">Agrega productos desde el catálogo</p>
+      <h2 class="empty-title">{{ 'cart.empty' | t }}</h2>
+      <p class="empty-sub">{{ 'cart.emptySub' | t }}</p>
       <button class="btn-primary" (click)="goToProducts()">
         <mat-icon>storefront</mat-icon>
-        Ver catálogo
+        {{ 'cart.viewCatalog' | t }}
       </button>
     </div>
   }
@@ -67,13 +67,13 @@
             [indeterminate]="selectedItems().length > 0 && !allSelected()"
             (change)="toggleSelectAll()"
             color="primary">
-            <span class="select-all-label">Seleccionar todo</span>
+            <span class="select-all-label">{{ 'cart.selectAll' | t }}</span>
           </mat-checkbox>
 
           <button class="btn-ghost-danger" (click)="clearCart()" [disabled]="clearingCart()">
             @if (clearingCart()) { <mat-spinner diameter="16" /> }
             @else { <mat-icon>delete_sweep</mat-icon> }
-            Vaciar carrito
+            {{ 'cart.clear' | t }}
           </button>
         </div>
 
@@ -104,11 +104,11 @@
               <!-- Info -->
               <div class="item-info">
                 <span class="item-name">{{ item.productName }}</span>
-                <span class="item-unit-price">{{ formatPrice(item.unitPrice) }} c/u</span>
+                <span class="item-unit-price">{{ formatPrice(item.unitPrice) }} {{ 'cart.perUnit' | t }}</span>
                 @if (item.stock <= 5 && item.stock > 0) {
                   <span class="stock-warning">
                     <mat-icon>warning</mat-icon>
-                    Solo quedan {{ item.stock }}
+                    {{ 'cart.onlyN' | t: { n: item.stock } }}
                   </span>
                 }
               </div>
@@ -133,7 +133,7 @@
                   <button class="qty-btn"
                           (click)="updateQuantity(item, item.quantity + 1)"
                           [disabled]="item.quantity >= item.stock || isUpdating(item.productId)"
-                          [matTooltip]="item.quantity >= item.stock ? 'Stock máximo alcanzado' : ''">
+                          [matTooltip]="item.quantity >= item.stock ? ('cart.maxStock' | t) : ''">
                     <mat-icon>add</mat-icon>
                   </button>
                 </div>
@@ -143,7 +143,7 @@
 
                 <!-- Eliminar -->
                 <button class="btn-remove" (click)="removeItem(item)"
-                        [disabled]="isUpdating(item.productId)" matTooltip="Eliminar">
+                        [disabled]="isUpdating(item.productId)" [matTooltip]="'cart.remove' | t">
                   <mat-icon>close</mat-icon>
                 </button>
 
@@ -158,10 +158,10 @@
       <!-- ── Resumen ── -->
       <div class="summary-col">
         <div class="summary-card">
-          <h3 class="summary-title">Resumen del pedido</h3>
+          <h3 class="summary-title">{{ 'cart.summary' | t }}</h3>
 
           @if (selectedItems().length === 0) {
-            <p class="no-selection">Selecciona productos para ver el resumen</p>
+            <p class="no-selection">{{ 'cart.selectToSee' | t }}</p>
           } @else {
             <div class="summary-rows">
               @for (item of selectedItems(); track item.cartItemId) {
@@ -175,7 +175,7 @@
             <mat-divider class="summary-divider" />
 
             <div class="summary-total">
-              <span>Total seleccionado</span>
+              <span>{{ 'cart.totalSelected' | t }}</span>
               <span class="total-value">{{ formatPrice(selectedTotal()) }}</span>
             </div>
           }
@@ -184,7 +184,7 @@
             [disabled]="selectedItems().length === 0"
             (click)="goToCheckout()">
             <mat-icon>payment</mat-icon>
-            Proceder al pago
+            {{ 'cart.checkout' | t }}
             @if (selectedItems().length > 0) {
               ({{ selectedItems().length }})
             }
@@ -192,7 +192,7 @@
 
 
           <button class="btn-ghost btn-continue" (click)="goToProducts()">
-            Seguir comprando
+            {{ 'cart.keepShopping' | t }}
           </button>
         </div>
       </div>

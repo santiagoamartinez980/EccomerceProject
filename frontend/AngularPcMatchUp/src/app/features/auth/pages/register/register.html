@@ -5,8 +5,8 @@
       <div class="logo-icon">
         <mat-icon>person_add</mat-icon>
       </div>
-      <h2>Crear una cuenta</h2>
-      <p>Completa tus datos para registrarte</p>
+      <h2>{{ 'register.title' | t }}</h2>
+      <p>{{ 'register.subtitle' | t }}</p>
     </div>
 
     <mat-card-content>
@@ -14,42 +14,42 @@
 
         <div class="form-row">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Nombre</mat-label>
-            <input matInput placeholder="Juan" formControlName="nombre" />
+            <mat-label>{{ 'register.firstName' | t }}</mat-label>
+            <input matInput [placeholder]="'register.firstNamePlaceholder' | t" formControlName="nombre" />
             <mat-icon matPrefix>badge</mat-icon>
             @if (formRegistro.get('nombre')?.hasError('required') && formRegistro.get('nombre')?.touched) {
-              <mat-error>El nombre es requerido</mat-error>
+              <mat-error>{{ 'register.firstNameRequired' | t }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Apellido</mat-label>
-            <input matInput placeholder="Pérez" formControlName="apellidos" />
+            <mat-label>{{ 'register.lastName' | t }}</mat-label>
+            <input matInput [placeholder]="'register.lastNamePlaceholder' | t" formControlName="apellidos" />
             <mat-icon matPrefix>badge</mat-icon>
             @if (formRegistro.get('apellidos')?.hasError('required') && formRegistro.get('apellidos')?.touched) {
-              <mat-error>Los apellidos son requeridos</mat-error>
+              <mat-error>{{ 'register.lastNameRequired' | t }}</mat-error>
             }
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Correo electrónico</mat-label>
-          <input matInput type="email" placeholder="ejemplo@correo.com" formControlName="correo" />
+          <mat-label>{{ 'auth.email' | t }}</mat-label>
+          <input matInput type="email" [placeholder]="'auth.emailPlaceholder' | t" formControlName="correo" />
           <mat-icon matPrefix>email</mat-icon>
           @if (formRegistro.get('correo')?.hasError('required') && formRegistro.get('correo')?.touched) {
-            <mat-error>El correo es requerido</mat-error>
+            <mat-error>{{ 'auth.emailRequired' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Contraseña</mat-label>
+          <mat-label>{{ 'auth.password' | t }}</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="clave" />
           <mat-icon matPrefix>lock</mat-icon>
           <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (formRegistro.get('clave')?.hasError('required') && formRegistro.get('clave')?.touched) {
-            <mat-error>La contraseña es requerida</mat-error>
+            <mat-error>{{ 'auth.passwordRequired' | t }}</mat-error>
           }
         </mat-form-field>
 
@@ -59,7 +59,7 @@
           class="btn-primary full-width"
           [disabled]="formRegistro.invalid"
         >
-          Registrarse
+          {{ 'register.submit' | t }}
         </button>
 
         <button
@@ -69,7 +69,7 @@
           (click)="volver()"
         >
           <mat-icon>arrow_back</mat-icon>
-          Ya tengo una cuenta
+          {{ 'register.haveAccount' | t }}
         </button>
 
       </form>

@@ -6,6 +6,8 @@ import { TokenService } from '../../../core/services/token.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +17,8 @@ import { Router } from '@angular/router';
   MatIconModule,
   MatTooltipModule,
   MatMenuModule,
-  MatButtonModule],
+  MatButtonModule,
+  TranslatePipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
@@ -23,6 +26,7 @@ import { Router } from '@angular/router';
 
 export class Navbar {
   private router = inject(Router);
+  readonly i18n = inject(I18nService);
   brandName = input<string>('Eccomerce');
   brandIcon = input<string>('storefront');
 

@@ -8,17 +8,17 @@
           <mat-icon>storefront</mat-icon>
         </div>
         <div>
-          <h1 class="catalog-title">Catálogo</h1>
+          <h1 class="catalog-title">{{ 'catalog.title' | t }}</h1>
           <span class="catalog-subtitle">
             {{ filteredProducts().length }}
-            {{ filteredProducts().length === 1 ? 'producto' : 'productos' }}
+            {{ (filteredProducts().length === 1 ? 'common.product.one' : 'common.product.other') | t }}
           </span>
         </div>
       </div>
 
       <button
         mat-icon-button
-        [matTooltip]="viewMode() === 'grid' ? 'Vista lista' : 'Vista grilla'"
+        [matTooltip]="(viewMode() === 'grid' ? 'catalog.listView' : 'catalog.gridView') | t"
         (click)="toggleViewMode()"
         class="view-toggle-btn"
       >
@@ -27,38 +27,38 @@
     </div>
 
     <!-- Buscador -->
-    <!-- Buscador -->
-<div class="search-wrapper">
-  <div class="search-box" [class.search-focused]="searchFocused()">
-    <mat-icon class="search-icon-left">search</mat-icon>
-    <input
-      class="search-input"
-      [value]="searchTerm()"
-      (input)="onSearchInput($any($event.target).value)"
-      (focus)="searchFocused.set(true)"
-      (blur)="searchFocused.set(false)"
-      placeholder="Buscar producto…"
-      autocomplete="off"
-    />
-    @if (searchTerm()) {
-      <button class="search-clear" (click)="clearFilters()" matTooltip="Limpiar">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
+    <div class="search-wrapper">
+      <div class="search-box" [class.search-focused]="searchFocused()">
+        <mat-icon class="search-icon-left">search</mat-icon>
+        <input
+          class="search-input"
+          [value]="searchTerm()"
+          (input)="onSearchInput($any($event.target).value)"
+          (focus)="searchFocused.set(true)"
+          (blur)="searchFocused.set(false)"
+          [placeholder]="'catalog.searchPlaceholder' | t"
+          autocomplete="off"
+        />
+        @if (searchTerm()) {
+          <button class="search-clear" (click)="clearFilters()" [matTooltip]="'catalog.clear' | t">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
 
-  <div class="search-meta">
-    <span class="search-hint">
-      <mat-icon>keyboard_return</mat-icon>
-      Busca por nombre
-    </span>
-    @if (searchTerm()) {
-      <span class="search-result-count">
-        {{ filteredProducts().length }} resultado{{ filteredProducts().length === 1 ? '' : 's' }}
-      </span>
-    }
-  </div>
-</div>
+      <div class="search-meta">
+        <span class="search-hint">
+          <mat-icon>keyboard_return</mat-icon>
+          {{ 'catalog.searchHint' | t }}
+        </span>
+        @if (searchTerm()) {
+          <span class="search-result-count">
+            {{ filteredProducts().length }}
+            {{ (filteredProducts().length === 1 ? 'catalog.result.one' : 'catalog.result.other') | t }}
+          </span>
+        }
+      </div>
+    </div>
 
     <!-- Chips de categoría -->
     @if (categories().length > 0) {
@@ -68,7 +68,7 @@
             [class.chip-selected]="selectedCategory() === ''"
             (click)="filterByCategory('')"
           >
-            Todos
+            {{ 'catalog.all' | t }}
           </mat-chip>
 
           @for (cat of categories(); track cat) {
@@ -90,7 +90,7 @@
   @if (loading()) {
     <div class="state-box">
       <mat-spinner diameter="36" />
-      <p class="state-text">Cargando productos…</p>
+      <p class="state-text">{{ 'catalog.loading' | t }}</p>
     </div>
   }
 
@@ -100,7 +100,7 @@
       <mat-icon class="state-icon">error_outline</mat-icon>
       <p class="state-text">{{ error() }}</p>
       <button mat-stroked-button (click)="loadProducts()" class="btn-ghost">
-        <mat-icon>refresh</mat-icon> Reintentar
+        <mat-icon>refresh</mat-icon> {{ 'catalog.retry' | t }}
       </button>
     </div>
   }
@@ -110,11 +110,11 @@
     <div class="state-box">
       <mat-icon class="state-icon">search_off</mat-icon>
       <p class="state-text">
-        Sin resultados
-        @if (searchTerm()) { para <strong>"{{ searchTerm() }}"</strong> }
+        {{ 'catalog.noResults' | t }}
+        @if (searchTerm()) { {{ 'catalog.noResultsFor' | t }} <strong>"{{ searchTerm() }}"</strong> }
       </p>
       <button mat-stroked-button (click)="clearFilters()" class="btn-ghost">
-        <mat-icon>clear_all</mat-icon> Limpiar filtros
+        <mat-icon>clear_all</mat-icon> {{ 'catalog.clearFilters' | t }}
       </button>
     </div>
   }
@@ -166,9 +166,9 @@
                 [class.stock-ok]="product.stock > 5"
                 [class.stock-low]="product.stock > 0 && product.stock <= 5"
                 [class.stock-out]="product.stock === 0">
-                @if (product.stock === 0) { Agotado }
-                @else if (product.stock <= 5) { Últimas {{ product.stock }} }
-                @else { {{ product.stock }} disp. }
+                @if (product.stock === 0) { {{ 'stock.soldOut' | t }} }
+                @else if (product.stock <= 5) { {{ 'stock.lastN' | t: { n: product.stock } }} }
+                @else { {{ 'stock.left' | t: { n: product.stock } }} }
               </span>
             </div>
 

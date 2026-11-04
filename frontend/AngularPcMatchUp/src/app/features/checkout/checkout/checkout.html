@@ -4,7 +4,7 @@
   <!-- ── Loading inicial ── -->
   <div *ngIf="isLoading" class="loading-screen">
     <mat-spinner diameter="48"></mat-spinner>
-    <p>Preparando tu pedido…</p>
+    <p>{{ 'checkout.preparing' | t }}</p>
   </div>
 
   <!-- ── Contenido principal ── -->
@@ -14,10 +14,10 @@
     <ng-container *ngIf="step() === 'summary'">
 
       <header class="checkout-header">
-        <button mat-icon-button (click)="goBackToCart()" aria-label="Volver">
+        <button mat-icon-button (click)="goBackToCart()" [attr.aria-label]="'checkout.back' | t">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1>Resumen del pedido</h1>
+        <h1>{{ 'checkout.summaryTitle' | t }}</h1>
       </header>
 
       <div class="checkout-layout">
@@ -29,7 +29,7 @@
           <mat-card class="section-card">
             <mat-card-header>
               <mat-icon mat-card-avatar>location_on</mat-icon>
-              <mat-card-title>Dirección de entrega</mat-card-title>
+              <mat-card-title>{{ 'checkout.deliveryAddress' | t }}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
 
@@ -37,7 +37,7 @@
                 <mat-radio-group
                   [(ngModel)]="selectedAddressId"
                   class="address-list"
-                  aria-label="Seleccionar dirección">
+                  [attr.aria-label]="'checkout.selectAddressAria' | t">
                   <mat-radio-button
                     *ngFor="let addr of addresses(); trackBy: trackByAddress"
                     [value]="addr.addressId"
@@ -48,7 +48,7 @@
                       <span *ngIf="addr.phone" class="address-phone">
                         <mat-icon>phone</mat-icon> {{ addr.phone }}
                       </span>
-                      <span *ngIf="addr.isDefault" class="badge-default">Predeterminada</span>
+                      <span *ngIf="addr.isDefault" class="badge-default">{{ 'checkout.default' | t }}</span>
                     </div>
                   </mat-radio-button>
                 </mat-radio-group>
@@ -57,12 +57,12 @@
               <ng-template #noAddresses>
                 <div class="empty-state small">
                   <mat-icon>home_work</mat-icon>
-                  <p>No tienes direcciones registradas</p>
+                  <p>{{ 'checkout.noAddresses' | t }}</p>
                 </div>
               </ng-template>
 
               <button mat-stroked-button color="primary" (click)="goToAddresses()" class="btn-add-addr">
-                <mat-icon>add</mat-icon> Agregar dirección
+                <mat-icon>add</mat-icon> {{ 'checkout.addAddress' | t }}
               </button>
             </mat-card-content>
           </mat-card>
@@ -71,7 +71,7 @@
           <mat-card class="section-card">
             <mat-card-header>
               <mat-icon mat-card-avatar>shopping_bag</mat-icon>
-              <mat-card-title>Productos ({{ cart()?.items?.length ?? 0 }})</mat-card-title>
+              <mat-card-title>{{ 'checkout.products' | t }} ({{ cart()?.items?.length ?? 0 }})</mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div class="items-list">
@@ -97,20 +97,20 @@
         <div class="checkout-right">
           <mat-card class="summary-card">
             <mat-card-header>
-              <mat-card-title>Total del pedido</mat-card-title>
+              <mat-card-title>{{ 'checkout.orderTotal' | t }}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div class="summary-row">
-                <span>Subtotal</span>
+                <span>{{ 'checkout.subtotal' | t }}</span>
                 <span>{{ formatPrice(cart()?.total ?? 0) }}</span>
               </div>
               <div class="summary-row">
-                <span>Envío</span>
-                <span class="text-green">Gratis</span>
+                <span>{{ 'checkout.shipping' | t }}</span>
+                <span class="text-green">{{ 'checkout.free' | t }}</span>
               </div>
               <mat-divider></mat-divider>
               <div class="summary-row total-row">
-                <strong>Total</strong>
+                <strong>{{ 'checkout.total' | t }}</strong>
                 <strong>{{ formatPrice(cart()?.total ?? 0) }}</strong>
               </div>
             </mat-card-content>
@@ -124,13 +124,13 @@
                 (click)="createOrder()">
                 <mat-spinner *ngIf="creatingOrder() || loadingPayment()" diameter="20"></mat-spinner>
                 <mat-icon *ngIf="!creatingOrder() && !loadingPayment()">lock</mat-icon>
-                {{ (creatingOrder() || loadingPayment()) ? 'Procesando…' : 'Ir a pagar' }}
+                {{ ((creatingOrder() || loadingPayment()) ? 'checkout.processing' : 'checkout.pay') | t }}
               </button>
             </mat-card-actions>
 
             <div class="wompi-badge">
               <mat-icon>security</mat-icon>
-              <span>Pago seguro</span>
+              <span>{{ 'checkout.secure' | t }}</span>
             </div>
           </mat-card>
         </div>
@@ -144,7 +144,7 @@
     <ng-container *ngIf="step() === 'payment'">
 
       <header class="checkout-header">
-        <h1>Completa tu pago</h1>
+        <h1>{{ 'checkout.completePayment' | t }}</h1>
       </header>
 
       <div class="payment-wrapper">
@@ -153,17 +153,17 @@
           <mat-card-content>
             <div class="payment-meta">
               <div class="meta-item">
-                <span class="meta-label">Referencia</span>
+                <span class="meta-label">{{ 'checkout.reference' | t }}</span>
                 <span class="meta-value mono">{{ paymentIntent()?.reference }}</span>
               </div>
               <div class="meta-item">
-                <span class="meta-label">Total a pagar</span>
+                <span class="meta-label">{{ 'checkout.totalToPay' | t }}</span>
                 <span class="meta-value total-amount">
                   {{ formatPrice((paymentIntent()?.amountInCents ?? 0) / 100) }}
                 </span>
               </div>
               <div class="meta-item">
-                <span class="meta-label">Moneda</span>
+                <span class="meta-label">{{ 'checkout.currency' | t }}</span>
                 <span class="meta-value">{{ paymentIntent()?.currency }}</span>
               </div>
             </div>
@@ -172,21 +172,21 @@
 
         <mat-card class="payment-button-card">
           <mat-card-content>
-            <p class="payment-instruction">Haz clic para completar el pago</p>
+            <p class="payment-instruction">{{ 'checkout.clickToPay' | t }}</p>
             <button
               mat-raised-button
               color="accent"
               class="btn-confirm-payment"
               (click)="confirmPaymentSimulation(createdOrder()?.orderId!)">
               <mat-icon>check_circle</mat-icon>
-              Confirmar Pago
+              {{ 'checkout.confirmPayment' | t }}
             </button>
           </mat-card-content>
         </mat-card>
 
         <p class="payment-note">
           <mat-icon>info</mat-icon>
-          Serás redirigido al resumen de tu pedido después de confirmar el pago.
+          {{ 'checkout.redirectNote' | t }}
         </p>
 
       </div>
@@ -199,10 +199,10 @@
 
       <div class="payment-redirect-screen">
         <mat-spinner diameter="48"></mat-spinner>
-        <h2>Procesando pago…</h2>
+        <h2>{{ 'checkout.processingPayment' | t }}</h2>
         <p>{{ paymentIntent()?.reference }}</p>
         <p class="amount">{{ formatPrice((paymentIntent()?.amountInCents ?? 0) / 100) }}</p>
-        <p class="small-text">Por favor espera mientras confirmamos tu pago.</p>
+        <p class="small-text">{{ 'checkout.pleaseWait' | t }}</p>
       </div>
 
     </ng-container>

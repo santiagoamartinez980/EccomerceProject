@@ -19,6 +19,8 @@ import { ProductInterface } from '../../interfaces/product.interface';
 import {ProductsApiService} from '../../services/products-api.service';
 import {ProductsQueryService} from '../../services/products-query.service';
 import { ProductCard } from '../product-card/product-card';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-product-catalog',
   imports: [CommonModule,
@@ -30,7 +32,7 @@ import { ProductCard } from '../product-card/product-card';
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatDividerModule, ProductCard],
+    MatDividerModule, ProductCard, TranslatePipe],
   templateUrl: './product-catalog.html',
   styleUrl: './product-catalog.css',
   
@@ -39,6 +41,7 @@ export class ProductCatalog implements OnInit ,OnDestroy{
   private readonly productsApiService = inject(ProductsApiService);
   private readonly productsQueryService = inject(ProductsQueryService);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
   private readonly destroy$ = new Subject<void>();
   searchFocused = signal(false);
   private readonly searchSubject = new Subject<string>();
@@ -80,7 +83,7 @@ export class ProductCatalog implements OnInit ,OnDestroy{
     this.error.set(null);
     this.productsApiService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.products.set(data); this.loading.set(false); },
-      error: () => { this.error.set('No se pudieron cargar los productos.'); this.loading.set(false); },
+      error: () => { this.error.set(this.i18n.t('catalog.errorLoad')); this.loading.set(false); },
     });
   }
  
@@ -95,7 +98,7 @@ export class ProductCatalog implements OnInit ,OnDestroy{
     this.error.set(null);
     this.productsQueryService.search(name).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.products.set(data); this.loading.set(false); },
-      error: () => { this.error.set('Error al buscar productos.'); this.loading.set(false); },
+      error: () => { this.error.set(this.i18n.t('catalog.errorSearch')); this.loading.set(false); },
     });
   }
  
