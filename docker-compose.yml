@@ -1,25 +1,31 @@
-version: '3.8'
-
-networks:
-  app_network:
-    driver: bridge
-
 services:
+  backup-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: "0:0"
+    entrypoint: ["/bin/sh", "-c"]
+    command: "mkdir -p /backups && chown 10001:0 /backups && chmod 770 /backups"
+    volumes:
+      - sqlbackups:/backups
+    restart: "no"
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sql_server
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:?Set SA_PASSWORD in .env}
       ACCEPT_EULA: "Y"
     ports:
-      - "1434:1433"
+      - "${DB_PORT:-1434}:1433"
     volumes:
       - sqldata:/var/opt/mssql
+      - sqlbackups:/var/opt/mssql/backups
+    depends_on:
+      backup-init:
+        condition: service_completed_successfully
     networks:
       - app_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' -No || exit 1"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q 'SELECT 1' -No > /dev/null"]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -29,21 +35,30 @@ services:
     build:
       context: ./backend/APIEccomerce
     ports:
-      - "5000:8080"
-    container_name: api_backend
+      - "${API_PORT:-5000}:8080"
     depends_on:
       db:
         condition: service_healthy
     environment:
-        ConnectionStrings__DefaultConnection: "Server=db,1433;Database=EccomerceDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-        Cloudinary__CloudName: ${CLOUDINARY_CLOUD_NAME}
-        Cloudinary__ApiKey: ${CLOUDINARY_API_KEY}
-        Cloudinary__ApiSecret: ${CLOUDINARY_API_SECRET}
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=EccomerceDB;User Id=sa;Password=${SA_PASSWORD:?Set SA_PASSWORD in .env};TrustServerCertificate=True;"
+      Jwt__Key: ${JWT_KEY:?Set JWT_KEY in .env}
+      Cloudinary__CloudName: ${CLOUDINARY_CLOUD_NAME:?Set CLOUDINARY_CLOUD_NAME in .env}
+      Cloudinary__ApiKey: ${CLOUDINARY_API_KEY:?Set CLOUDINARY_API_KEY in .env}
+      Cloudinary__ApiSecret: ${CLOUDINARY_API_SECRET:?Set CLOUDINARY_API_SECRET in .env}
+      GoogleMaps__ApiKey: ${GOOGLE_MAPS_API_KEY:?Set GOOGLE_MAPS_API_KEY in .env}
+      Wompi__PublicKey: ${WOMPI_PUBLIC_KEY:?Set WOMPI_PUBLIC_KEY in .env}
+      Wompi__IntegritySecret: ${WOMPI_INTEGRITY_SECRET:?Set WOMPI_INTEGRITY_SECRET in .env}
+      Wompi__EventSecret: ${WOMPI_EVENT_SECRET:?Set WOMPI_EVENT_SECRET in .env}
+      Frontend__Url: ${FRONTEND_URL:-http://localhost:4200}
+      Backup__Directory: /var/opt/mssql/backups
+    volumes:
+      - sqlbackups:/var/opt/mssql/backups
     networks:
       - app_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health > /dev/null"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -54,8 +69,7 @@ services:
       context: ./frontend/AngularPcMatchUp
       dockerfile: Dockerfile
     ports:
-      - "4200:80"
-    container_name: angular_frontend
+      - "${FRONTEND_PORT:-4200}:80"
     depends_on:
       backend:
         condition: service_healthy
@@ -63,11 +77,16 @@ services:
       - app_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:80 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80 > /dev/null"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 10s
 
+networks:
+  app_network:
+    driver: bridge
+
 volumes:
   sqldata:
+  sqlbackups:

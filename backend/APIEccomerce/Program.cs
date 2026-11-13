@@ -12,9 +12,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($">>> Cadena de conexión: {connStr}");
-
 // Repositorios
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -37,6 +34,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<DatabaseBackupService>();
 
 // DbContext con retry
 builder.Services.AddDbContext<AppDbContext>(opt =>

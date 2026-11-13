@@ -37,12 +37,14 @@ report-task.txt
 # Logs
 # ==============================
 *.log
+*.bak
 
 # ==============================
 # Environment variables
 # ==============================
 .env
 .env.*
+!.env.example
 
 # ==============================
 # OS files
@@ -53,4 +55,8 @@ Thumbs.db
 # ==============================
 # Development configuration
 # ==============================
-appsettings.Development.json
+appsettings.*.json
+!appsettings.Development.example.json
+
+# Temporary Microsoft Office lock files
+~$*

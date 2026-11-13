@@ -21,6 +21,9 @@ namespace APIEccomerce.Models.DTOs
     {
         [JsonPropertyName("transaction")]
         public WompiTransaction Transaction { get; set; } = null!;
+
+        [JsonExtensionData]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalProperties { get; set; }
     }
 
     public class WompiTransaction
@@ -42,6 +45,9 @@ namespace APIEccomerce.Models.DTOs
 
         [JsonPropertyName("payment_method_type")]
         public string? PaymentMethodType { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, System.Text.Json.JsonElement>? AdditionalProperties { get; set; }
     }
 
     public class WompiWebhookSignature

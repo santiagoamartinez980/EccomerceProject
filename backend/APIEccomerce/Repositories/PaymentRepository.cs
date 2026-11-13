@@ -20,7 +20,9 @@ namespace APIEccomerce.Repositories
 
         public async Task<Payment?> GetByOrderId(int orderId) =>
             await _context.Payments
-                .FirstOrDefaultAsync(p => p.OrderId == orderId);
+                .Where(p => p.OrderId == orderId)
+                .OrderByDescending(p => p.PaymentId)
+                .FirstOrDefaultAsync();
 
         public async Task<Payment> Create(Payment payment)
         {

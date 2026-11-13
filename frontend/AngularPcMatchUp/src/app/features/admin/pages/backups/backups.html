@@ -1,0 +1,17 @@
+<section class="backups">
+  <h1>Copias de seguridad</h1>
+  <p>Las copias se guardan en el servidor de SQL Server. Descárguelas y guárdelas también fuera del servidor.</p>
+  <button type="button" (click)="create()" [disabled]="busy()">{{ busy() ? 'Procesando...' : 'Crear copia ahora' }}</button>
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  @if (info()) { <p class="info" role="status">{{ info() }}</p> }
+  <h2>Copias disponibles</h2>
+  @if (files().length === 0) { <p>Aún no hay copias disponibles.</p> }
+  @for (file of files(); track file.name) {
+    <div class="backup">
+      <div><strong>{{ file.name }}</strong><small>{{ file.createdUtc | date:'medium' }} · {{ file.bytes / 1048576 | number:'1.1-1' }} MB</small></div>
+      <button type="button" (click)="download(file)">Descargar</button>
+      <button type="button" class="danger" (click)="restore(file)" [disabled]="busy()">Restaurar</button>
+    </div>
+  }
+  <p class="note">Si se pierde la base y no puede iniciar sesión, un operador debe restaurar una copia desde el servidor con el script de recuperación del proyecto.</p>
+</section>

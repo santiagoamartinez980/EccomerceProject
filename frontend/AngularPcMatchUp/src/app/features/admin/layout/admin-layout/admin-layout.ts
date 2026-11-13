@@ -43,6 +43,7 @@ export class AdminLayout {
   adminEmail = signal('');
 
   navItems: NavItem[] = [
+    { label: 'Copias de seguridad', icon: 'backup', route: '/admin/copias' },
     { label: 'Dashboard',   icon: 'dashboard',       route: '/admin/dashboard' },
     { label: 'Productos',   icon: 'inventory_2',     route: '/admin/productos' },
     { label: 'Categorías',  icon: 'category',        route: '/admin/categorias' },

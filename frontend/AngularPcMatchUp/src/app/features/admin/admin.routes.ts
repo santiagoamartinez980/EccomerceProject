@@ -37,6 +37,11 @@ export const ADMIN_ROUTES: Routes = [
           ),
         title: 'Gestión de Categorías',
       },
+      {
+        path: 'copias',
+        loadComponent: () => import('./pages/backups/backups').then(m => m.Backups),
+        title: 'Copias de seguridad',
+      },
       // Slots listos para agregar sin tocar el layout:
       // { path: 'pedidos',    loadComponent: () => import('./pages/orders/...') },
       // { path: 'usuarios',   loadComponent: () => import('./pages/users/...') },

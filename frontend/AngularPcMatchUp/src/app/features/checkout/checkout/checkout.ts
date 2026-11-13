@@ -22,6 +22,18 @@ import { PaymentIntentDto } from './interfaces/payment-interface.dto';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
+interface WompiResult { transaction?: { id: string; status: string } }
+interface WompiCheckout { open(callback: (result: WompiResult) => void): void }
+interface WompiWindow extends Window {
+  WidgetCheckout?: new (options: {
+    currency: string;
+    amountInCents: number;
+    reference: string;
+    publicKey: string;
+    signature: { integrity: string };
+  }) => WompiCheckout;
+}
+
 
 @Component({
   selector: 'app-checkout',
@@ -70,6 +82,7 @@ export class Checkout implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     const container = document.getElementById('wompi-widget-container');
     if (container) container.innerHTML = '';
   }
@@ -110,7 +123,7 @@ export class Checkout implements OnInit, OnDestroy {
     }
 
     this.creatingOrder.set(true);
-    console.log('📦 Creando orden...');
+    console.log('Creando orden...');
 
     const payload: any = {
       addressId: this.selectedAddressId()!,
@@ -122,12 +135,12 @@ export class Checkout implements OnInit, OnDestroy {
 
     this.orderService.create(payload).subscribe({
       next: (order) => {
-        console.log('✓ Orden creada:', order.orderId);
+        console.log('Orden creada:', order.orderId);
         this.createdOrder.set(order);
         this.loadPaymentIntent(order.orderId);
       },
       error: (err) => {
-        console.error('✗ Error al crear orden:', err);
+        console.error('Error al crear orden:', err);
         this.snack.open(this.i18n.t('checkout.errorOrder'), this.i18n.t('common.ok'), { duration: 3000 });
         this.creatingOrder.set(false);
       },
@@ -136,17 +149,17 @@ export class Checkout implements OnInit, OnDestroy {
 
   private loadPaymentIntent(orderId: number): void {
     this.loadingPayment.set(true);
-    console.log('💳 Creando intención de pago para orden:', orderId);
+    console.log('Creando intención de pago para orden:', orderId);
 
     this.paymentService.createIntent(orderId).subscribe({
       next: (intent) => {
-        console.log('✓ WOMPI INTENT RECIBIDO:', intent);
+        console.log('Wompi intent recibido:', intent.reference);
         this.paymentIntent.set(intent);
         this.loadingPayment.set(false);
         this.step.set('payment');
       },
       error: (error) => {
-        console.error('✗ ERROR AL CREAR INTENCIÓN:', error);
+        console.error('Error al crear intención:', error);
         this.snack.open(
           this.i18n.t('checkout.errorPayment', { status: error.statusText }),
           this.i18n.t('common.ok'),
@@ -158,34 +171,43 @@ export class Checkout implements OnInit, OnDestroy {
     });
   }
 
-  confirmPaymentSimulation(orderId: number): void {
+  async openWompi(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const intent = this.paymentIntent();
+    const orderId = this.createdOrder()?.orderId;
+    if (!intent || !orderId) return;
     this.step.set('confirming');
-    console.log('✓ Simulando pago exitoso para orden:', orderId);
+    try {
+      await this.loadWompiScript();
+      const WidgetCheckout = (window as WompiWindow).WidgetCheckout;
+      if (!WidgetCheckout) throw new Error('El Widget de Wompi no está disponible.');
+      new WidgetCheckout({
+        currency: intent.currency,
+        amountInCents: intent.amountInCents,
+        reference: intent.reference,
+        publicKey: intent.publicKey,
+        signature: { integrity: intent.signature },
+      }).open(result => {
+        if (result.transaction?.status === 'APPROVED') {
+          this.cartService.clearCart().subscribe({ error: () => {} });
+        }
+        this.router.navigate([`/pedido/${orderId}/confirmacion`]);
+      });
+      this.step.set('payment');
+    } catch {
+      this.snack.open('No se pudo abrir Wompi Sandbox.', this.i18n.t('common.ok'), { duration: 5000 });
+      this.step.set('payment');
+    }
+  }
 
-    this.paymentService.confirmPayment(orderId).subscribe({
-      next: () => {
-        console.log('✓ Pago confirmado, vaciando carrito...');
-        
-        this.cartService.clearCart().subscribe({
-          next: () => {
-            console.log('✓ Carrito vaciado');
-            setTimeout(() => {
-              this.router.navigate([`/pedido/${orderId}/confirmacion`]);
-            }, 1500);
-          },
-          error: () => {
-            console.warn('⚠️ Carrito no se pudo vaciar, pero continuando...');
-            setTimeout(() => {
-              this.router.navigate([`/pedido/${orderId}/confirmacion`]);
-            }, 1500);
-          }
-        });
-      },
-      error: (err) => {
-        console.error('✗ Error confirmando pago:', err);
-        this.snack.open(this.i18n.t('checkout.errorConfirm'), this.i18n.t('common.ok'), { duration: 3000 });
-        this.step.set('payment');
-      },
+  private loadWompiScript(): Promise<void> {
+    if ((window as WompiWindow).WidgetCheckout) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.wompi.co/widget.js';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('No se pudo cargar Wompi.'));
+      document.head.appendChild(script);
     });
   }
 

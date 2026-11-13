@@ -19,12 +19,19 @@
   <!-- ── Confirmación Exitosa ── -->
   <ng-container *ngIf="order() && !loading() && !error()">
 
-    <div class="success-header">
+    <div class="success-header" *ngIf="order()!.status === 'Paid'">
       <div class="success-icon">
         <mat-icon>check_circle</mat-icon>
       </div>
       <h1>¡Pago confirmado!</h1>
       <p>Tu pedido ha sido registrado exitosamente</p>
+    </div>
+
+    <div class="success-header" *ngIf="order()!.status !== 'Paid'">
+      <div class="success-icon"><mat-icon>hourglass_empty</mat-icon></div>
+      <h1>Pago aún no confirmado</h1>
+      <p>Estado del pedido: {{ order()!.status }}. El resultado puede tardar unos momentos.</p>
+      <button mat-stroked-button (click)="loadOrder()">Actualizar estado</button>
     </div>
 
     <div class="confirmation-layout">
@@ -49,9 +56,9 @@
             </div>
             <div class="info-item">
               <span class="info-label">Estado</span>
-              <span class="info-value status confirmed">
-                <mat-icon>check_circle</mat-icon>
-                Confirmado
+              <span class="info-value status" [class.confirmed]="order()!.status === 'Paid'">
+                <mat-icon>{{ order()!.status === 'Paid' ? 'check_circle' : 'schedule' }}</mat-icon>
+                {{ order()!.status }}
               </span>
             </div>
           </div>

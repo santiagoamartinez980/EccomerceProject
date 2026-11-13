@@ -196,7 +196,9 @@ namespace APIEccomerce.Tests
             var payment = new Payment
             {
                 PaymentId = 1,
-                OrderId = 1
+                OrderId = 1,
+                Amount = 100000,
+                Currency = "COP"
             };
 
             _paymentRepoMock
@@ -211,6 +213,9 @@ namespace APIEccomerce.Tests
             _paymentRepoMock
                 .Setup(r => r.GetByReference("ORDER-1-123"))
                 .ReturnsAsync(payment);
+
+            _orderRepoMock.Setup(r => r.GetById(1))
+                .ReturnsAsync(new Order { OrderId = 1, Status = OrderStatus.Pending });
 
             _orderServiceMock
                 .Setup(r => r.ConfirmPayment(1))
@@ -300,7 +305,8 @@ namespace APIEccomerce.Tests
                         Id = "trans_456",
                         Reference = "ORDER-2-456",
                         Status = "DECLINED",
-                        AmountInCents = 5000000
+                        AmountInCents = 5000000,
+                        Currency = "COP"
                     }
                 },
                 Signature = new WompiWebhookSignature
@@ -318,6 +324,13 @@ namespace APIEccomerce.Tests
                         "5000000")
                 }
             };
+
+            _paymentRepoMock
+                .Setup(r => r.GetByReference("ORDER-2-456"))
+                .ReturnsAsync(new Payment { OrderId = 2, Amount = 50000, Currency = "COP" });
+
+            _orderRepoMock.Setup(r => r.GetById(2))
+                .ReturnsAsync(new Order { OrderId = 2, Status = OrderStatus.Pending });
 
             _paymentRepoMock
                 .Setup(r => r.UpdateStatus(

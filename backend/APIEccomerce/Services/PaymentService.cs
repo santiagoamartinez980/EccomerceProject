@@ -4,6 +4,7 @@ using APIEccomerce.Repositories.Interfaces;
 using APIEccomerce.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace APIEccomerce.Services
 {
@@ -39,15 +40,20 @@ namespace APIEccomerce.Services
                 throw new InvalidOperationException(
                     "Este pedido ya fue procesado.");
 
-            var reference = $"ORDER-{orderId}-{DateTime.UtcNow.Ticks}";
+            var existing = await _paymentRepo.GetByOrderId(orderId);
+            var reference = existing?.Status == PaymentStatus.Pending
+                ? existing.Reference
+                : $"ORDER-{orderId}-{Guid.NewGuid():N}";
             var amountInCents = (long)(order.Total * 100);
 
-            var secret    = _config["Wompi:IntegritySecret"]!;
+            var secret = _config["Wompi:IntegritySecret"];
+            var publicKey = _config["Wompi:PublicKey"];
+            if (string.IsNullOrWhiteSpace(secret) || string.IsNullOrWhiteSpace(publicKey))
+                throw new InvalidOperationException("Faltan credenciales de Wompi Sandbox.");
             var rawString = $"{reference}{amountInCents}COP{secret}";
             var signature = ComputeSha256(rawString);
 
-            var existing = await _paymentRepo.GetByOrderId(orderId);
-            if (existing is null)
+            if (existing?.Status != PaymentStatus.Pending)
             {
                 await _paymentRepo.Create(new Payment
                 {
@@ -63,7 +69,7 @@ namespace APIEccomerce.Services
                 Reference     = reference,
                 AmountInCents = amountInCents,
                 Currency      = "COP",
-                PublicKey     = _config["Wompi:PublicKey"]!,
+                PublicKey     = publicKey,
                 Signature     = signature,
                 RedirectUrl   = $"{_config["Frontend:Url"]}/pedido/{orderId}/confirmacion"
             };
@@ -79,7 +85,24 @@ namespace APIEccomerce.Services
                     "Firma del webhook inválida.");
 
             var transaction = webhook.Data.Transaction;
+            var payment = await _paymentRepo.GetByReference(transaction.Reference)
+                ?? throw new KeyNotFoundException("Referencia de pago no encontrada.");
+            if (transaction.AmountInCents != (long)(payment.Amount * 100) ||
+                !string.Equals(transaction.Currency, payment.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("El monto o la moneda no coinciden con el pago esperado.");
+            var order = await _orderRepo.GetById(payment.OrderId)
+                ?? throw new KeyNotFoundException("Pedido no encontrado.");
+            if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Paid)
+                throw new InvalidOperationException("El pedido no admite este pago.");
             var status      = MapStatus(transaction.Status);
+            if (status == PaymentStatus.Pending)
+                return;
+            if (payment.Status == PaymentStatus.Approved)
+            {
+                if (status == PaymentStatus.Approved && order.Status == OrderStatus.Pending)
+                    await _orderService.ConfirmPayment(payment.OrderId);
+                return;
+            }
             var paidAt      = status == PaymentStatus.Approved
                 ? DateTime.UtcNow : (DateTime?)null;
 
@@ -92,35 +115,39 @@ namespace APIEccomerce.Services
 
             if (status == PaymentStatus.Approved)
             {
-                var payment = await _paymentRepo
-                    .GetByReference(transaction.Reference);
-
-                if (payment is not null)
+                if (order.Status == OrderStatus.Pending)
                     await _orderService.ConfirmPayment(payment.OrderId);
             }
         }
 
         private bool ValidateWebhookSignature(WompiWebhookDto webhook)
         {
-            var secret = _config["Wompi:EventSecret"]!;
-            var transaction = webhook.Data.Transaction;
+            var secret = _config["Wompi:EventSecret"];
+            if (string.IsNullOrWhiteSpace(secret) || webhook.Data is null || webhook.Signature is null)
+                return false;
             var props       = webhook.Signature.Properties;
-
-            var values = props.Select(p => p switch
+            if (props.Count == 0) return false;
+            var data = JsonSerializer.SerializeToElement(webhook.Data);
+            var values = new List<string>();
+            foreach (var property in props)
             {
-                "transaction.id"            => transaction.Id,
-                "transaction.status"        => transaction.Status,
-                "transaction.amount_in_cents" =>
-                    transaction.AmountInCents.ToString(),
-                _ => string.Empty
-            });
+                var value = data;
+                foreach (var segment in property.Split('.'))
+                {
+                    if (value.ValueKind != JsonValueKind.Object || !value.TryGetProperty(segment, out value))
+                        return false;
+                }
+                if (value.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined or JsonValueKind.Object or JsonValueKind.Array)
+                    return false;
+                values.Add(value.ToString());
+            }
 
             var rawString = string.Concat(values)
                             + webhook.Timestamp
                             + secret;
 
             var computed = ComputeSha256(rawString);
-            return computed == webhook.Signature.Checksum;
+            return string.Equals(computed, webhook.Signature.Checksum, StringComparison.OrdinalIgnoreCase);
         }
 
         private static PaymentStatus MapStatus(string wompiStatus) =>
