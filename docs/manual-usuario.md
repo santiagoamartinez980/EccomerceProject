@@ -47,11 +47,15 @@ El entorno mostrado por el botón es **Sandbox**: sirve para pruebas y no debe i
 
 ## 6. Consultar y cancelar pedidos
 
-En el menú de perfil, abra **Mis pedidos** para ver los pedidos más recientes primero, su estado, dirección, productos y total. La pantalla puede mostrar el botón **Cancelar pedido** en estados *Pending* o *Confirmed*. El servidor solo acepta la cancelación cuando el pedido sigue en *Pending*; si ya cambió de estado, la acción dará error. Confirme la cancelación solo después de verificar el número del pedido.
+En el menú de perfil, abra **Mis pedidos** para ver los pedidos más recientes primero, su estado, dirección, productos y total. El estado se actualiza al volver a la pestaña y cada 15 segundos mientras permanezca visible. **Pendiente de despacho** indica que Wompi confirmó el pago; después puede cambiar a **Despachado** y **Entregado**. Solo puede pulsar **Cancelar pedido** mientras el pago siga pendiente. Confirme la cancelación después de verificar el número del pedido.
 
 ## 7. Panel de administrador
 
-Una cuenta con rol **Admin** entra al panel después de iniciar sesión. El menú lateral contiene **Dashboard**, **Productos**, **Categorías** y **Copias de seguridad**. El botón del pie permite ir al catálogo o cerrar sesión. Las cuentas normales no pueden abrir estas pantallas.
+Una cuenta con rol **Admin** entra al panel después de iniciar sesión. El menú lateral contiene **Dashboard**, **Pedidos**, **Productos**, **Categorías** y **Copias de seguridad**. El botón del pie permite ir al catálogo o cerrar sesión. Las cuentas normales no pueden abrir estas pantallas. Consulte el [manual detallado del administrador](manual-administrador.md), con capturas y pasos de cada tarea.
+
+### Pedidos
+
+Abra **Pedidos** para filtrar por estado y revisar cliente, dirección, productos y total. Un pedido pagado queda **Pendiente de despacho**; puede marcarlo **Despachado** y luego **Entregado**, o devolverlo a pendiente si todavía no salió. Los pedidos pendientes de pago se pueden cancelar. La aplicación no realiza reembolsos automáticos de pedidos pagados.
 
 ### Productos
 
@@ -91,4 +95,4 @@ Las copias del panel son manuales. La persona que opera la tienda debe conservar
 
 ## Alcance de este manual
 
-Las pantallas visibles no incluyen recuperación de contraseña, seguimiento de envío funcional ni gestión de usuarios desde el panel. La vista de confirmación contiene textos informativos sobre notificación y seguimiento, pero este manual no los trata como servicios implementados.
+Las pantallas visibles no incluyen recuperación de contraseña, números de guía de transporte ni gestión de usuarios desde el panel. La vista de confirmación contiene textos informativos sobre notificación y seguimiento, pero este manual no los trata como servicios implementados.
