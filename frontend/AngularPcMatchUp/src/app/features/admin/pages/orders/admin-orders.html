@@ -1,0 +1,51 @@
+<section class="orders-admin">
+  <header>
+    <div><h1>Gestión de pedidos</h1><p>Revisa pagos, direcciones y estado del despacho.</p></div>
+    <button type="button" class="refresh" (click)="refresh()" [disabled]="loading()">Actualizar</button>
+  </header>
+
+  <label class="filter">Estado
+    <select [value]="filter()" (change)="filter.set($any($event.target).value)">
+      <option value="all">Todos</option>
+      <option value="Pending">Pendiente de pago</option>
+      <option value="Paid">Pendiente de despacho</option>
+      <option value="Shipped">Despachado</option>
+      <option value="Delivered">Entregado</option>
+      <option value="Cancelled">Cancelado</option>
+    </select>
+  </label>
+
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  @if (loading()) { <p>Cargando pedidos...</p> }
+  @else if (visibleOrders().length === 0) { <p>No hay pedidos con este estado.</p> }
+  @else {
+    <div class="list">
+      @for (order of visibleOrders(); track order.orderId) {
+        <article class="order">
+          <div class="top">
+            <div><h2>Pedido #{{ order.orderId }}</h2><small>{{ order.createdAt | date:'medium' }}</small></div>
+            <strong class="status" [class]="'status ' + order.status.toLowerCase()">{{ label(order.status) }}</strong>
+          </div>
+          <div class="grid">
+            <div><span class="caption">Cliente</span><strong>{{ order.customerName || order.customerEmail || 'Cliente' }}</strong><small>{{ order.customerEmail }}</small></div>
+            <div><span class="caption">Entrega</span><strong>{{ order.address.addressLine }}</strong><small>{{ order.address.city }}, {{ order.address.department }} · {{ order.address.phone }}</small></div>
+            <div><span class="caption">Total</span><strong>{{ order.total | currency:'COP':'symbol':'1.0-0' }}</strong></div>
+          </div>
+          <details><summary>Ver {{ order.details.length }} producto(s)</summary>
+            <ul>@for (item of order.details; track item.productId) { <li>{{ item.quantity }} × {{ item.productName }} — {{ item.subtotal | currency:'COP':'symbol':'1.0-0' }}</li> }</ul>
+            @if (order.address.notes) { <p><strong>Notas:</strong> {{ order.address.notes }}</p> }
+          </details>
+          <div class="actions">
+            @if (order.status === 'Paid') { <button type="button" (click)="change(order, 2)" [disabled]="saving() !== null">Marcar despachado</button> }
+            @if (order.status === 'Shipped') {
+              <button type="button" (click)="change(order, 1)" [disabled]="saving() !== null">Volver a pendiente de despacho</button>
+              <button type="button" (click)="change(order, 3)" [disabled]="saving() !== null">Marcar entregado</button>
+            }
+            @if (order.status === 'Pending') { <button type="button" class="danger" (click)="change(order, 4)" [disabled]="saving() !== null">Cancelar pedido</button> }
+            @if (order.status === 'Paid') { <small>Para cancelar un pedido pagado, primero debe gestionarse el reembolso en Wompi.</small> }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

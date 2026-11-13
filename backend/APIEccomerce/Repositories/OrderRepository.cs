@@ -14,6 +14,16 @@ namespace APIEccomerce.Repositories
             _context = context;
         }
 
+        public async Task<List<Order>> GetAll()
+        {
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.Address)
+                .Include(o => o.Details).ThenInclude(d => d.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<List<Order>> GetByUserId(int userId)
         {
             return await _context.Orders
@@ -52,7 +62,7 @@ namespace APIEccomerce.Repositories
             order.Status = status;
             order.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
-            return order;
+            return await GetById(orderId) ?? order;
         }
 
         public async Task<bool> Delete(int orderId)

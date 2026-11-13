@@ -21,6 +21,12 @@ namespace APIEccomerce.Services
             _addressRepo = addressRepo;
         }
 
+        public async Task<List<OrderDto>> GetAll()
+        {
+            var orders = await _orderRepo.GetAll();
+            return orders.Select(Map).ToList();
+        }
+
         public async Task<List<OrderDto>> GetByUserId(int userId)
         {
             var orders = await _orderRepo.GetByUserId(userId);
@@ -92,8 +98,22 @@ namespace APIEccomerce.Services
 
         public async Task<OrderDto?> UpdateStatus(int orderId, OrderStatus status)
         {
-            var order = await _orderRepo.UpdateStatus(orderId, status);
-            return order is null ? null : Map(order);
+            var order = await _orderRepo.GetById(orderId);
+            if (order is null) return null;
+
+            var allowed = (order.Status, status) switch
+            {
+                (OrderStatus.Paid, OrderStatus.Shipped) => true,
+                (OrderStatus.Shipped, OrderStatus.Paid) => true,
+                (OrderStatus.Shipped, OrderStatus.Delivered) => true,
+                (OrderStatus.Pending, OrderStatus.Cancelled) => true,
+                _ => false
+            };
+            if (!allowed)
+                throw new InvalidOperationException("Cambio de estado no permitido para este pedido.");
+
+            var updated = await _orderRepo.UpdateStatus(orderId, status);
+            return updated is null ? null : Map(updated);
         }
 
         public async Task<bool> Cancel(int userId, int orderId)
@@ -106,13 +126,6 @@ namespace APIEccomerce.Services
             if (order.Status != OrderStatus.Pending)
                 throw new InvalidOperationException(
                     "Solo se pueden cancelar pedidos en estado pendiente.");
-
-            foreach (var detail in order.Details)
-            {
-                var product = await _productRepo.GetByIdPublic(detail.ProductId);
-                if (product is not null)
-                    product.Stock += detail.Quantity;
-            }
 
             await _orderRepo.UpdateStatus(orderId, OrderStatus.Cancelled);
             return true;
@@ -154,6 +167,8 @@ namespace APIEccomerce.Services
             Status    = o.Status.ToString(),
             Total     = o.Total,
             CreatedAt = o.CreatedAt,
+            CustomerName = o.User is null ? string.Empty : $"{o.User.FirstName} {o.User.LastName}".Trim(),
+            CustomerEmail = o.User?.Email ?? string.Empty,
             Address   = new AddressDto
             {
                 AddressId        = o.Address.AddressId,

@@ -211,26 +211,39 @@ namespace APIEccomerce.Tests
             var order = new Order
             {
                 OrderId = 1,
-                Status = OrderStatus.Pending,
+                Status = OrderStatus.Paid,
                 Address = new Address { AddressId = 1, AddressLine = "Calle 1" },
                 Details = new List<OrderDetail>()
             };
             var updated = new Order
             {
                 OrderId = 1,
-                Status = OrderStatus.Paid,
+                Status = OrderStatus.Shipped,
                 Address = new Address { AddressId = 1, AddressLine = "Calle 1" },
                 Details = new List<OrderDetail>()
             };
 
-            _orderRepoMock.Setup(r => r.UpdateStatus(1, OrderStatus.Paid)).ReturnsAsync(updated);
+            _orderRepoMock.Setup(r => r.UpdateStatus(1, OrderStatus.Shipped)).ReturnsAsync(updated);
+
+            _orderRepoMock.Setup(r => r.GetById(1)).ReturnsAsync(order);
 
             // Act
-            var result = await _service.UpdateStatus(1, OrderStatus.Paid);
+            var result = await _service.UpdateStatus(1, OrderStatus.Shipped);
 
             // Assert
             result.Should().NotBeNull();
-            result!.Status.Should().Be("Paid");
+            result!.Status.Should().Be("Shipped");
+        }
+
+        [Fact]
+        public async Task UpdateStatus_RejectsShippingUnpaidOrder()
+        {
+            var order = new Order { OrderId = 1, Status = OrderStatus.Pending };
+            _orderRepoMock.Setup(r => r.GetById(1)).ReturnsAsync(order);
+
+            await _service.Invoking(s => s.UpdateStatus(1, OrderStatus.Shipped))
+                .Should().ThrowAsync<InvalidOperationException>();
+            _orderRepoMock.Verify(r => r.UpdateStatus(It.IsAny<int>(), It.IsAny<OrderStatus>()), Times.Never);
         }
 
         [Fact]
@@ -258,6 +271,7 @@ namespace APIEccomerce.Tests
 
             // Assert
             result.Should().BeTrue();
+            product.Stock.Should().Be(10);
         }
 
         [Fact]
@@ -319,7 +333,7 @@ namespace APIEccomerce.Tests
                 {
                     AddressId = 1,
                     AddressLine = "Calle 123",
-                    City = "Bogot·",
+                    City = "Bogot√°",
                     Department = "Cundinamarca",
                     Country = "Colombia",
                     PostalCode = "111111",
@@ -327,7 +341,7 @@ namespace APIEccomerce.Tests
                     Longitude = 0,
                     Phone = "3000000000",
                     Notes = "",
-                    FormattedAddress = "Calle 123 Bogot·",
+                    FormattedAddress = "Calle 123 Bogot√°",
                     IsDefault = true
                 },
 
@@ -356,7 +370,7 @@ namespace APIEccomerce.Tests
                 {
                     AddressId = 1,
                     AddressLine = "Calle 123",
-                    City = "Bogot·",
+                    City = "Bogot√°",
                     Department = "Cundinamarca",
                     Country = "Colombia",
                     PostalCode = "111111",
@@ -364,7 +378,7 @@ namespace APIEccomerce.Tests
                     Longitude = 0,
                     Phone = "3000000000",
                     Notes = "",
-                    FormattedAddress = "Calle 123 Bogot·",
+                    FormattedAddress = "Calle 123 Bogot√°",
                     IsDefault = true
                 },
 

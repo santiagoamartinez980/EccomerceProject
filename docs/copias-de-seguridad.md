@@ -2,9 +2,9 @@
 
 ## Preparación
 
-Configure `Backup__Directory` como variable de entorno de la API con una ruta absoluta **fuera del repositorio**. La cuenta que ejecuta SQL Server necesita lectura y escritura allí; la cuenta de la API necesita lectura y permiso para crear la carpeta. La cuenta SQL usada por la API requiere permisos de `BACKUP DATABASE` y `RESTORE DATABASE` sobre la base (para restaurar, normalmente privilegios elevados). Si no quiere dar permisos de restauración a la API, use el script desde el servidor y no use el botón del panel.
+Configure `Backup__Directory` como variable de entorno de la API con una ruta absoluta **fuera del repositorio**. La cuenta que ejecuta SQL Server necesita lectura y escritura allí; la cuenta de la API necesita listar, leer y descargar los archivos, además de borrar copias incompletas si falla la operación. La cuenta SQL usada por la API requiere permisos de `BACKUP DATABASE` y `RESTORE DATABASE` sobre la base (para restaurar, normalmente privilegios elevados). Si no quiere dar permisos de restauración a la API, use el script desde el servidor y no use el botón del panel.
 
-En este equipo, la configuración de desarrollo apunta a la carpeta de copias predeterminada de la instancia local de SQL Server. En otro equipo debe cambiarse esa ruta o definirse `Backup__Directory`.
+En este equipo, la configuración local de desarrollo apunta a `C:\SqlBackups\EccomerceDB`. La carpeta tiene acceso limitado a la cuenta de SQL Server, la cuenta que ejecuta la API y los administradores. En otro equipo debe crearse una carpeta equivalente y ajustar `Backup__Directory`. Evite la carpeta de copias predeterminada dentro de `Program Files`: SQL Server puede escribir allí mientras la API no puede leer ni descargar los archivos.
 
 Ejemplo local: `Backup__Directory=C:\SqlBackups\EccomerceDB`. No guarde copias en `wwwroot`, Git ni en la misma unidad como única copia. Proteja el directorio: los archivos contienen usuarios, direcciones, pedidos y demás datos de la tienda.
 

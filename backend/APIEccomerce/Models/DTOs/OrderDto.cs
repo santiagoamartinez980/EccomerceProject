@@ -16,6 +16,12 @@ namespace APIEccomerce.Models.DTOs
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
 
+        [JsonPropertyName("customerName")]
+        public string CustomerName { get; set; } = string.Empty;
+
+        [JsonPropertyName("customerEmail")]
+        public string CustomerEmail { get; set; } = string.Empty;
+
         [JsonPropertyName("address")]
         public AddressDto Address { get; set; } = null!;
 

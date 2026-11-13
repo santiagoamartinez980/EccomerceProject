@@ -55,6 +55,7 @@
 }
 
 .shortcut-card[data-color='blue']   .shortcut-icon { background: #eff6ff; color: #3b82f6; }
+.shortcut-card[data-color='green']  .shortcut-icon { background: #ecfdf5; color: #059669; }
 .shortcut-card[data-color='purple'] .shortcut-icon { background: #f5f3ff; color: #7c3aed; }
 
 .shortcut-label {

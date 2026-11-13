@@ -6,6 +6,8 @@ export interface OrderDto {
   status: string;
   total: number;
   createdAt: string;
+  customerName: string;
+  customerEmail: string;
   address: AddressDto;
   details: OrderDetailDto[];
 }

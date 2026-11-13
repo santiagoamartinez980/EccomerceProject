@@ -44,11 +44,11 @@ export class AdminLayout {
 
   navItems: NavItem[] = [
     { label: 'Copias de seguridad', icon: 'backup', route: '/admin/copias' },
+    { label: 'Pedidos', icon: 'receipt_long', route: '/admin/pedidos' },
     { label: 'Dashboard',   icon: 'dashboard',       route: '/admin/dashboard' },
     { label: 'Productos',   icon: 'inventory_2',     route: '/admin/productos' },
     { label: 'Categorías',  icon: 'category',        route: '/admin/categorias' },
     // Agrega aquí sin tocar el template:
-    // { label: 'Pedidos',  icon: 'receipt_long',    route: '/admin/pedidos' },
     // { label: 'Usuarios', icon: 'group',           route: '/admin/usuarios' },
     // { label: 'Reportes', icon: 'bar_chart',       route: '/admin/reportes' },
   ];

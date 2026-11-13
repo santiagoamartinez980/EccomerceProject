@@ -17,6 +17,7 @@ export class Dashboard {
   private readonly router = inject(Router);
 
   shortcuts = [
+    { label: 'Gestionar Pedidos', icon: 'receipt_long', route: '/admin/pedidos', color: 'green' },
     { label: 'Gestionar Productos', icon: 'inventory_2', route: '/admin/productos', color: 'blue' },
     { label: 'Gestionar Categorías', icon: 'category',   route: '/admin/categorias', color: 'purple' },
   ];

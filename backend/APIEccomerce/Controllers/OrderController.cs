@@ -34,6 +34,19 @@ namespace APIEccomerce.Controllers
             });
         }
 
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllAdmin()
+        {
+            var orders = await _service.GetAll();
+            return Ok(new Response<List<OrderDto>>
+            {
+                IsSuccess = true,
+                Message = "Pedidos obtenidos correctamente",
+                Value = orders
+            });
+        }
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -88,7 +101,12 @@ namespace APIEccomerce.Controllers
         public async Task<IActionResult> UpdateStatus(
             int id, [FromBody] UpdateOrderStatusDto dto)
         {
-            var order = await _service.UpdateStatus(id, dto.Status);
+            OrderDto? order;
+            try { order = await _service.UpdateStatus(id, dto.Status); }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new Response<object> { IsSuccess = false, Message = ex.Message });
+            }
             if (order is null)
                 return NotFound(new Response<object>
                 {

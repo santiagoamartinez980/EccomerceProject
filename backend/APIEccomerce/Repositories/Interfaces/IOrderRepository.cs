@@ -4,6 +4,7 @@ namespace APIEccomerce.Repositories.Interfaces
 {
     public interface IOrderRepository
     {
+        Task<List<Order>> GetAll();
         Task<List<Order>> GetByUserId(int userId);
         Task<Order?> GetById(int orderId);
         Task<Order> Create(Order order);

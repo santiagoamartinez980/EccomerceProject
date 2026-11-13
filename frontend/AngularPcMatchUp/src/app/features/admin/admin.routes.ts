@@ -42,8 +42,12 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./pages/backups/backups').then(m => m.Backups),
         title: 'Copias de seguridad',
       },
+      {
+        path: 'pedidos',
+        loadComponent: () => import('./pages/orders/admin-orders').then(m => m.AdminOrders),
+        title: 'Gestión de pedidos',
+      },
       // Slots listos para agregar sin tocar el layout:
-      // { path: 'pedidos',    loadComponent: () => import('./pages/orders/...') },
       // { path: 'usuarios',   loadComponent: () => import('./pages/users/...') },
       // { path: 'reportes',   loadComponent: () => import('./pages/reports/...') },
     ],

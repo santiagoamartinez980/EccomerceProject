@@ -5,6 +5,7 @@ namespace APIEccomerce.Services.Interfaces
 {
     public interface IOrderService
     {
+        Task<List<OrderDto>> GetAll();
         Task<List<OrderDto>> GetByUserId(int userId);
         Task<OrderDto?> GetById(int userId, int orderId);
         Task<OrderDto> Create(int userId, CreateOrderDto dto);

@@ -7,6 +7,7 @@
       <div>
         <h1>Mis pedidos</h1>
         <p *ngIf="!loading()">{{ orders().length }} pedido{{ orders().length !== 1 ? 's' : '' }} en total</p>
+        <small *ngIf="!loading()">Los estados se actualizan automáticamente.</small>
       </div>
     </div>
     <button mat-raised-button color="primary" (click)="goToProducts()">
